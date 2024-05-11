@@ -5,6 +5,9 @@ import { NavbarComponent } from './ui/navbar.component';
 
 @Component({
   template: ` <app-navbar></app-navbar>
+    <div>
+      <h1>huh</h1>
+    </div>
     <router-outlet></router-outlet>`,
   selector: 'app-root',
   standalone: true,
