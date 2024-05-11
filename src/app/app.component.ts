@@ -1,12 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Octokit } from 'octokit';
+import { NavbarComponent } from './ui/navbar.component';
 
 @Component({
-  template: ` <router-outlet></router-outlet>`,
+  template: ` <app-navbar></app-navbar>
+    <router-outlet></router-outlet>`,
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [NavbarComponent, RouterOutlet],
 })
 export class AppComponent implements OnInit {
   async ngOnInit() {
