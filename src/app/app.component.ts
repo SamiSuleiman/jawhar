@@ -1,4 +1,4 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Octokit } from 'octokit';
 
@@ -19,10 +19,5 @@ export class AppComponent implements OnInit {
     });
 
     console.log(a);
-  }
-
-  @HostListener('window:keydown.enter', ['$event'])
-  onSubmit() {
-    console.log(this.name);
   }
 }
