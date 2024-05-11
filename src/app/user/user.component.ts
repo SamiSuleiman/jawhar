@@ -15,11 +15,10 @@ import { RouterLink } from '@angular/router';
         </li>
       </div>
     </app-navbar>
-    post content
   `,
   styles: ``,
-  selector: 'app-post',
+  selector: 'app-user',
   standalone: true,
   imports: [NavbarComponent, RouterLink],
 })
-export class PostComponent {}
+export class UserComponent {}
