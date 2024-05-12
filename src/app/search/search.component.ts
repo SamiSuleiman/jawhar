@@ -1,6 +1,8 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit, inject, signal } from '@angular/core';
 import { NavbarComponent } from '../ui/navbar.component';
 import { FormsModule } from '@angular/forms';
+import { GithubService } from '../github/github.service';
+import { Router } from '@angular/router';
 
 @Component({
   template: `
@@ -17,7 +19,13 @@ import { FormsModule } from '@angular/forms';
           placeholder="search"
         />
       </label>
-      <button class="btn rounded-none" (click)="onSubmit()">submit</button>
+      @if ($isLoading()) {
+        <button class="btn btn-square">
+          <span class="loading loading-spinner"></span>
+        </button>
+      } @else {
+        <button class="btn rounded-none" (click)="onSubmit()">submit</button>
+      }
     </div>
   `,
   styles: ``,
@@ -25,11 +33,24 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [NavbarComponent, FormsModule],
 })
-export class SearchComponent {
+export class SearchComponent implements OnInit {
+  private readonly ghService = inject(GithubService);
+  private readonly router = inject(Router);
+
+  readonly $isLoading = signal(false);
+
   name = '';
 
+  async ngOnInit(): Promise<void> {
+    await this.ghService.eject();
+  }
+
   @HostListener('window:keydown.enter', ['$event'])
-  onSubmit() {
-    // get user and gists, validate if they have valid blog gist, save them in search service signal
+  async onSubmit() {
+    this.$isLoading.set(true);
+    const _res = await this.ghService.init(this.name);
+    this.$isLoading.set(false);
+
+    if (_res) this.router.navigate(['user']);
   }
 }

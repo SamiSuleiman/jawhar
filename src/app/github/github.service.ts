@@ -14,11 +14,20 @@ export class GithubService {
   readonly $gistFiles = signal<string[]>([]);
   readonly $profile = signal<Profile | undefined>(undefined);
 
-  constructor() {
+  async init(username: string): Promise<boolean> {
     const _files = this.$gistFiles();
     const _profile = this.$profile();
-    if (_files.length === 0) this.getGistFiles('samisul');
-    if (!_profile) this.getProfile('samisul');
+
+    if (_files.length === 0) await this.getGistFiles(username);
+    if (!_profile) await this.getProfile(username);
+
+    if (this.$gistFiles() && this.$profile()) return true;
+    return false;
+  }
+
+  async eject(): Promise<void> {
+    this.$gistFiles.set([]);
+    this.$profile.set(undefined);
   }
 
   private async getProfile(username: string): Promise<void> {
