@@ -1,8 +1,7 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
-import { NavbarComponent } from '../ui/navbar.component';
 import { Router, RouterLink } from '@angular/router';
 import { GithubService } from '../github/github.service';
-import { container } from '../app.consts';
+import { NavbarComponent } from '../ui/navbar.component';
 import { Post } from './post.model';
 import { PostService } from './post.service';
 
@@ -20,26 +19,114 @@ import { PostService } from './post.service';
         </li>
       </div>
     </app-navbar>
-    <div [class]="container">
-      @for (post of $posts(); track post) {
-        <div class="card card-side bg-base-100 shadow-xl max-h-40">
-          <figure>
-            <img [src]="post.thumbnail" alt="Thumbnail" />
-          </figure>
-          <div class="card-body">
-            <h2 class="card-title cursor-pointer hover:underline">
-              {{ post.title }}
-            </h2>
-            <div class="flex gap-2 flex-wrap">
-              @for (tag of post.tags.slice(0, 4); track tag) {
-                <div class="badge badge-neutral">{{ tag }}</div>
-              }
-            </div>
-          </div>
-        </div>
-      }
+    <div
+      class="max-h-[60vh] overflow-y-scroll p-1 mt-4 flex justify-start items-center"
+    >
+      <ul>
+        @for (post of $posts(); track post) {
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+        }
+      </ul>
     </div>
-    posts list
   `,
   selector: 'app-post-list',
   standalone: true,
@@ -49,8 +136,6 @@ export class PostListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly postService = inject(PostService);
   readonly ghService = inject(GithubService);
-
-  readonly container = container;
 
   readonly $posts = signal<Post[]>([]);
 
