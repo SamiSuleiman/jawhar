@@ -1,7 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Octokit } from 'octokit';
-import { combineLatest, filter, firstValueFrom, tap } from 'rxjs';
+import {
+  catchError,
+  combineLatest,
+  filter,
+  firstValueFrom,
+  of,
+  tap,
+} from 'rxjs';
 import { Profile } from './github.model';
 import { AuthService } from '../auth/auth.service';
 
@@ -14,6 +21,7 @@ export class GithubService {
   private octokit: any;
   readonly $gistFiles = signal<string[]>([]);
   readonly $profile = signal<Profile | undefined>(undefined);
+  readonly $err = signal<boolean>(false);
 
   async init(username: string): Promise<boolean> {
     this.octokit = new Octokit({
@@ -36,41 +44,58 @@ export class GithubService {
   }
 
   private async getProfile(username: string): Promise<void> {
-    const { data } = (await this.octokit.rest.users.getByUsername({
-      username,
-    })) as any | undefined;
+    try {
+      this.$err.set(false);
 
-    if (!data) return;
+      const { data } = (await this.octokit.rest.users.getByUsername({
+        username,
+      })) as any | undefined;
 
-    this.$profile.set({
-      name: data.name ?? data.login,
-      avatarUrl: data.avatar_url,
-    } as Profile);
+      if (!data) return;
+
+      this.$profile.set({
+        name: data.name ?? data.login,
+        avatarUrl: data.avatar_url,
+      } as Profile);
+    } catch {
+      this.$err.set(true);
+    }
   }
 
   private async getGistFiles(username: string): Promise<void> {
-    const { data } = await this.octokit.rest.gists.listForUser({
-      username,
-    });
+    try {
+      this.$err.set(false);
+      const { data } = await this.octokit.rest.gists.listForUser({
+        username,
+      });
 
-    const gist = data?.find((g: any) => g.description === 'jawhar');
+      const gist = data?.find((g: any) => g.description === 'jawhar');
+      const rawGistFileUrls: string[] = [];
 
-    const rawGistFileUrls: string[] = [];
+      Object.values(gist?.files).forEach((file: any) => {
+        if (file && file.raw_url && file.language === 'Markdown')
+          rawGistFileUrls.push(file.raw_url);
+      });
 
-    Object.values(gist?.files).forEach((file: any) => {
-      if (file && file.raw_url && file.language === 'Markdown')
-        rawGistFileUrls.push(file.raw_url);
-    });
-
-    await firstValueFrom(
-      combineLatest(
-        rawGistFileUrls.map((url) =>
-          this.http.get(url, { responseType: 'text' }),
+      this.$err.set(false);
+      await firstValueFrom(
+        combineLatest(
+          rawGistFileUrls.map((url) =>
+            this.http.get(url, { responseType: 'text' }).pipe(
+              catchError(() => {
+                this.$err.set(true);
+                return of(null);
+              }),
+              filter((file): file is string => !!file),
+            ),
+          ),
+        ).pipe(
+          filter((file) => !!file),
+          tap((files) => this.$gistFiles.set(files)),
         ),
-      ).pipe(
-        filter((file) => !!file),
-        tap((files) => this.$gistFiles.set(files)),
-      ),
-    );
+      );
+    } catch {
+      this.$err.set(true);
+    }
   }
 }

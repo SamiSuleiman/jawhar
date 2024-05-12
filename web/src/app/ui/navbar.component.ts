@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
       <div class="flex-1">
         <label class="swap swap-rotate">
           <!-- this hidden checkbox controls the state -->
-          <input type="checkbox" class="theme-controller" value="coffee" />
+          <input type="checkbox" class="theme-controller" value="retro" />
           <svg
             class="swap-off fill-current w-10 h-10"
             xmlns="http://www.w3.org/2000/svg"

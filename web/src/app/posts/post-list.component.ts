@@ -22,7 +22,7 @@ import { PostService } from './post.service';
     <div
       class="max-h-[60vh] overflow-y-scroll p-1 mt-4 flex justify-start items-center"
     >
-      <ul>
+      <ul class="flex flex-col gap-2">
         @for (post of $posts(); track post) {
           <li class="hover:underline">
             <a [routerLink]="['/posts', post.title]">

@@ -8,8 +8,7 @@ import { container } from '../app.consts';
 @Component({
   template: `
     <app-navbar> </app-navbar>
-
-    <div [class]="container">
+    <div class="p-1 mt-4 flex justify-start items-center">
       <label
         class="input input-bordered flex items-center gap-2 w-full rounded-none"
       >
@@ -37,8 +36,6 @@ import { container } from '../app.consts';
 export class SearchComponent implements OnInit {
   private readonly ghService = inject(GithubService);
   private readonly router = inject(Router);
-
-  readonly container = container;
 
   readonly $isLoading = signal(false);
 
