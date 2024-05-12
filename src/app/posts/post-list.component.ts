@@ -1,8 +1,10 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { NavbarComponent } from '../ui/navbar.component';
 import { Router, RouterLink } from '@angular/router';
 import { GithubService } from '../github/github.service';
 import { container } from '../app.consts';
+import { Post } from './post.model';
+import { PostService } from './post.service';
 
 @Component({
   template: `
@@ -19,7 +21,7 @@ import { container } from '../app.consts';
       </div>
     </app-navbar>
     <div [class]="container">
-      @for (profile of []; track profile) {
+      @for (post of $posts(); track post) {
         <div class="card card-side bg-base-100 shadow-xl">
           <figure>
             <img
@@ -46,12 +48,20 @@ import { container } from '../app.consts';
 })
 export class PostListComponent implements OnInit {
   private readonly router = inject(Router);
+  private readonly postService = inject(PostService);
   readonly ghService = inject(GithubService);
 
   readonly container = container;
 
-  ngOnInit(): void {
-    if (!this.ghService.$profile() || !this.ghService.$gistFiles())
-      this.router.navigate(['search']);
+  readonly $posts = signal<Post[]>([]);
+
+  async ngOnInit(): Promise<void> {
+    if (!this.ghService.$profile()) this.router.navigate(['search']);
+    await this.refreshPosts();
+  }
+
+  async refreshPosts(): Promise<void> {
+    const _posts = await this.postService.getParsedPosts();
+    this.$posts.set(_posts);
   }
 }
