@@ -60,19 +60,23 @@ export class PostService {
 
     const _title = html.getElementById('title');
     const _tags = html.getElementById('tags');
+    const _thumbnail = html.getElementById('thumbnail');
 
     const _titleContent = _title?.textContent;
     const _tagsContent = _tags?.textContent?.split(',');
+    const _thumbnailContent = _thumbnail?.textContent;
 
     if (!_titleContent || !_tagsContent) return;
 
     _title.remove();
     _tags?.remove();
+    _thumbnail?.remove();
 
     return {
       title: _titleContent,
       content: html.body.innerHTML,
       tags: _tagsContent,
+      thumbnail: _thumbnailContent ?? undefined,
     };
   }
 }

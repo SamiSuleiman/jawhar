@@ -66,7 +66,6 @@ export class PostListComponent implements OnInit {
 
   async refreshPosts(): Promise<void> {
     const _posts = await this.postService.getParsedPosts();
-    console.log(_posts);
     this.$posts.set(_posts);
   }
 }
