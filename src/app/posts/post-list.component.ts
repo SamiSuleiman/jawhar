@@ -22,18 +22,18 @@ import { PostService } from './post.service';
     </app-navbar>
     <div [class]="container">
       @for (post of $posts(); track post) {
-        <div class="card card-side bg-base-100 shadow-xl">
+        <div class="card card-side bg-base-100 shadow-xl max-h-40">
           <figure>
-            <img
-              src="https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.jpg"
-              alt="Movie"
-            />
+            <img [src]="post.thumbnail" alt="Thumbnail" />
           </figure>
           <div class="card-body">
-            <h2 class="card-title">New movie is released!</h2>
-            <p>Click the button to watch on Jetflix app.</p>
-            <div class="card-actions justify-end">
-              <button class="btn btn-primary">Watch</button>
+            <h2 class="card-title cursor-pointer hover:underline">
+              {{ post.title }}
+            </h2>
+            <div class="flex gap-2 flex-wrap">
+              @for (tag of post.tags.slice(0, 4); track tag) {
+                <div class="badge badge-neutral">{{ tag }}</div>
+              }
             </div>
           </div>
         </div>
@@ -41,7 +41,6 @@ import { PostService } from './post.service';
     </div>
     posts list
   `,
-  styles: ``,
   selector: 'app-post-list',
   standalone: true,
   imports: [NavbarComponent, RouterLink],
