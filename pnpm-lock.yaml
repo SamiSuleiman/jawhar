@@ -29,6 +29,9 @@ dependencies:
   '@angular/router':
     specifier: ^17.0.0
     version: 17.3.8(@angular/common@17.3.8)(@angular/core@17.3.8)(@angular/platform-browser@17.3.8)(rxjs@7.8.1)
+  marked:
+    specifier: ^12.0.2
+    version: 12.0.2
   octokit:
     specifier: ^4.0.2
     version: 4.0.2
@@ -5510,6 +5513,12 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /marked@12.0.2:
+    resolution: {integrity: sha512-qXUm7e/YKFoqFPYPa3Ukg9xlI5cyAtGmyEIzMfW//m6kXwCy2Ps9DYf5ioijFKQ8qyuscrHoY04iJGctu2Kg0Q==}
+    engines: {node: '>= 18'}
+    hasBin: true
+    dev: false
 
   /media-typer@0.3.0:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}

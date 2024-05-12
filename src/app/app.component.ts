@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { Octokit } from 'octokit';
+import { GithubService } from './github/github.service';
 
 @Component({
   template: ` <router-outlet></router-outlet>`,
@@ -9,15 +9,9 @@ import { Octokit } from 'octokit';
   imports: [RouterOutlet],
 })
 export class AppComponent implements OnInit {
+  private readonly gh = inject(GithubService);
+
   name = '';
 
-  async ngOnInit() {
-    const octokit = new Octokit();
-
-    const a = await octokit.rest.gists.listForUser({
-      username: 'samisul',
-    });
-
-    console.log(a);
-  }
+  async ngOnInit() {}
 }
