@@ -1,16 +1,25 @@
 import { Routes } from '@angular/router';
-import { SearchComponent } from './search/search.component';
+import { AuthComponent } from './auth/auth.component';
 import { PostListComponent } from './posts/post-list.component';
 import { PostComponent } from './posts/post.component';
+import { SearchComponent } from './search/search.component';
 import { UserComponent } from './user/user.component';
+import { authGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'search',
     component: SearchComponent,
+    canActivate: [authGuard],
+  },
+  {
+    path: 'auth',
+    component: AuthComponent,
+    canActivate: [authGuard],
   },
   {
     path: 'posts',
+    canActivate: [authGuard],
     children: [
       {
         path: '',
@@ -28,6 +37,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: '',
+    redirectTo: 'search',
   },
 ];
