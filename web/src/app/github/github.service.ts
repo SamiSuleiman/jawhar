@@ -22,8 +22,10 @@ export class GithubService {
   readonly $gistFiles = signal<string[]>([]);
   readonly $profile = signal<Profile | undefined>(undefined);
   readonly $err = signal<boolean>(false);
+  readonly $currUsername = signal<string | undefined>(undefined);
 
   async init(username: string): Promise<boolean> {
+    this.$currUsername.set(username);
     this.octokit = new Octokit({
       auth: this.authService.$tokens()?.access,
     });
@@ -41,6 +43,7 @@ export class GithubService {
   async eject(): Promise<void> {
     this.$gistFiles.set([]);
     this.$profile.set(undefined);
+    this.$currUsername.set(undefined);
   }
 
   private async getProfile(username: string): Promise<void> {
@@ -62,7 +65,7 @@ export class GithubService {
     }
   }
 
-  private async getGistFiles(username: string): Promise<void> {
+  async getGistFiles(username: string): Promise<void> {
     try {
       this.$err.set(false);
       const { data } = await this.octokit.rest.gists.listForUser({

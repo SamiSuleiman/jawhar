@@ -29,12 +29,13 @@ export class PostService {
 
   private readonly $posts = signal<Post[]>([]);
 
-  async getParsedPosts(): Promise<Post[]> {
+  private async getParsedPosts(refresh = false): Promise<Post[]> {
     const _currPosts = this.$posts();
     if (_currPosts.length) return _currPosts;
 
     const _files = this.ghService.$gistFiles();
-    if (!_files) return [];
+    if (!_files || refresh)
+      await this.ghService.getGistFiles(this.ghService.$currUsername() ?? '');
 
     const _rawPosts = await Promise.all(
       _files.map(async (p) => await this.marked.parse(p)),
@@ -48,9 +49,9 @@ export class PostService {
     return _parsed;
   }
 
-  async refreshPosts(): Promise<Post[]> {
+  async refreshPosts(refresh = false): Promise<Post[]> {
     this.$posts.set([]);
-    return await this.getParsedPosts();
+    return await this.getParsedPosts(refresh);
   }
 
   private async parsePost(post: string): Promise<Post | undefined> {
