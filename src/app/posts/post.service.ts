@@ -37,15 +37,15 @@ export class PostService {
     if (!_files) return [];
 
     const _rawPosts = await Promise.all(
-      _files.map((p) => this.marked.parse(p)),
+      _files.map(async (p) => await this.marked.parse(p)),
     );
 
     const _parsed = (
-      await Promise.all(_rawPosts.map((p) => this.parsePost(p)))
+      await Promise.all(_rawPosts.map(async (p) => await this.parsePost(p)))
     ).filter((p): p is Post => !!p);
 
     this.$posts.set(_parsed);
-    return [];
+    return _parsed;
   }
 
   async refreshPosts(): Promise<Post[]> {

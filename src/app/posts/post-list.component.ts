@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { NavbarComponent } from '../ui/navbar.component';
 import { Router, RouterLink } from '@angular/router';
 import { GithubService } from '../github/github.service';
@@ -55,6 +55,10 @@ export class PostListComponent implements OnInit {
 
   readonly $posts = signal<Post[]>([]);
 
+  constructor() {
+    computed(() => console.log(this.$posts()));
+  }
+
   async ngOnInit(): Promise<void> {
     if (!this.ghService.$profile()) this.router.navigate(['search']);
     await this.refreshPosts();
@@ -62,6 +66,7 @@ export class PostListComponent implements OnInit {
 
   async refreshPosts(): Promise<void> {
     const _posts = await this.postService.getParsedPosts();
+    console.log(_posts);
     this.$posts.set(_posts);
   }
 }
