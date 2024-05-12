@@ -3,18 +3,23 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Octokit } from 'octokit';
 import { combineLatest, filter, firstValueFrom, tap } from 'rxjs';
 import { Profile } from './github.model';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GithubService {
+  private readonly authService = inject(AuthService);
   private readonly http = inject(HttpClient);
-  private readonly octokit = new Octokit();
-
+  private octokit: any;
   readonly $gistFiles = signal<string[]>([]);
   readonly $profile = signal<Profile | undefined>(undefined);
 
   async init(username: string): Promise<boolean> {
+    this.octokit = new Octokit({
+      auth: this.authService.$tokens()?.access,
+    });
+
     const _files = this.$gistFiles();
     const _profile = this.$profile();
 
