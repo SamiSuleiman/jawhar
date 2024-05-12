@@ -3,12 +3,13 @@ import { NavbarComponent } from '../ui/navbar.component';
 import { FormsModule } from '@angular/forms';
 import { GithubService } from '../github/github.service';
 import { Router } from '@angular/router';
+import { container } from '../app.consts';
 
 @Component({
   template: `
     <app-navbar> </app-navbar>
 
-    <div class="p-1 h-[80vh] flex justify-center items-center">
+    <div [class]="container">
       <label
         class="input input-bordered flex items-center gap-2 w-full rounded-none"
       >
@@ -36,6 +37,8 @@ import { Router } from '@angular/router';
 export class SearchComponent implements OnInit {
   private readonly ghService = inject(GithubService);
   private readonly router = inject(Router);
+
+  readonly container = container;
 
   readonly $isLoading = signal(false);
 

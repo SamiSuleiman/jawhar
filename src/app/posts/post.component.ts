@@ -7,8 +7,9 @@ import { RouterLink } from '@angular/router';
     <app-navbar>
       <div class="flex items-center lg:gap-6">
         <div class="flex items-center">
-          <li><a [routerLink]="['/posts']">/ posts</a></li>
-          <li><a>/ tags</a></li>
+          <li><a [routerLink]="['/user']">/user</a></li>
+          <li><a [routerLink]="['/posts']">/posts</a></li>
+          <li><a>/tags</a></li>
         </div>
         <li class="underline decoration-wavy font-bold">
           <a [routerLink]="['/']">exit</a>
