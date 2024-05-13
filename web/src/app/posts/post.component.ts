@@ -17,9 +17,9 @@ import { PostService } from './post.service';
         </li>
       </div>
     </app-navbar>
-    <div class="p-2">
+    <div class="p-2 overflow-x-scroll">
       <h1 class="font-bold">{{ $post()?.title }}</h1>
-      <div style="color:'inherit'" [innerHTML]="$post()?.content ?? ''"></div>
+      <div [innerHTML]="$post()?.content ?? ''"></div>
     </div>
   `,
   styles: ``,
