@@ -1,6 +1,6 @@
 import { Component, OnInit, computed, inject, input } from '@angular/core';
 import { NavbarComponent } from '../ui/navbar.component';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { PostService } from './post.service';
 
 @Component({
@@ -29,11 +29,13 @@ import { PostService } from './post.service';
 })
 export class PostComponent implements OnInit {
   private readonly postService = inject(PostService);
+  private readonly router = inject(Router);
 
   $title = input.required<string>({ alias: 'title' });
 
   $post = computed(() => {
     const _post = this.postService.getPost(this.$title());
+    if (!_post) this.router.navigate(['/posts']);
     return _post;
   });
 
