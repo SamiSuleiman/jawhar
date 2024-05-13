@@ -17,7 +17,7 @@ export class AuthController {
   @Redirect(`${process.env['WEB_BASE_URL']}`)
   async githubCallBack(@Req() req: any) {
     return {
-      url: `${process.env['WEB_BASE_URL']}/auth/?access=${req.user.access}&refresh=${req.user.refresh}`,
+      url: `${process.env['WEB_BASE_URL']}/?access=${req.user.access}&refresh=${req.user.refresh}`,
     };
   }
 }

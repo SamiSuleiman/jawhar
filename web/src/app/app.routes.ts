@@ -8,13 +8,13 @@ import { authGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
   {
-    path: 'search',
-    component: SearchComponent,
+    path: '',
+    component: AuthComponent,
     canActivate: [authGuard],
   },
   {
-    path: 'auth',
-    component: AuthComponent,
+    path: 'search',
+    component: SearchComponent,
     canActivate: [authGuard],
   },
   {

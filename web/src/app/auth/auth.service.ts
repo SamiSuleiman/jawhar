@@ -22,7 +22,7 @@ export class AuthService {
     if (_tokensFromURL) {
       localStorage.setItem('jawhar_tokens', JSON.stringify(_tokensFromURL));
       this.$tokens.set(_tokensFromURL);
-      this.router.navigate(['/']);
+      this.router.navigate(['/search']);
       return true;
     }
 

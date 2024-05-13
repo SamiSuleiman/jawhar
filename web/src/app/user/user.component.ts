@@ -13,7 +13,7 @@ import { GithubService } from '../github/github.service';
           <li><a>/tags</a></li>
         </div>
         <li class="underline decoration-wavy font-bold">
-          <a [routerLink]="['/']">exit</a>
+          <a [routerLink]="['/search']">exit</a>
         </li>
       </div>
     </app-navbar>

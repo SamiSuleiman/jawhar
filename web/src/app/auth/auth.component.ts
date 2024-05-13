@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   template: ``,
@@ -10,8 +11,10 @@ import { AuthService } from './auth.service';
 })
 export class AuthComponent {
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   constructor() {
-    this.authService.login();
+    const _is = this.authService.login();
+    if (_is) this.router.navigate(['/search']);
   }
 }
