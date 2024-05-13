@@ -4,9 +4,11 @@ ARG IMG=node:20-alpine
 FROM ${IMG} AS prod-build
 WORKDIR /app
 COPY . .
-RUN npm i 
-RUN npm run build
-RUN npm prune --production
+RUN npm install -g pnpm
+RUN pnpm i
+RUN pnpm run build
+RUN pnpm prune --prod
+RUN npm rm -g pnpm
 
 # prod stage
 FROM ${IMG} AS prod
