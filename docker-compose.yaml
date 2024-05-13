@@ -2,7 +2,7 @@ version: "3"
 
 services:
   nest:
-    image: mmayss/jawhar_server:main
+    image: mmayss/jawhar_server:master
     container_name: nest
     restart: unless-stopped
     env_file:
