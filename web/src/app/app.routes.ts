@@ -26,7 +26,7 @@ export const routes: Routes = [
         component: PostListComponent,
       },
       {
-        path: ':id',
+        path: ':title',
         component: PostComponent,
       },
     ],

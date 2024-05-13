@@ -20,14 +20,21 @@ export class PostService {
         return hljs.highlight(code, { language }).value;
       },
     }),
-  )
-    .use({
-      gfm: true,
-      breaks: true,
-    })
-    .use(customHeadingId());
+  ).use(customHeadingId(), {
+    gfm: true,
+    breaks: true,
+  });
 
   private readonly $posts = signal<Post[]>([]);
+
+  async refreshPosts(refresh = false): Promise<Post[]> {
+    this.$posts.set([]);
+    return await this.getParsedPosts(refresh);
+  }
+
+  getPost(title: string): Post | undefined {
+    return this.$posts().find((p) => p.title === title);
+  }
 
   private async getParsedPosts(refresh = false): Promise<Post[]> {
     const _currPosts = this.$posts();
@@ -37,21 +44,12 @@ export class PostService {
     if (!_files || refresh)
       await this.ghService.getGistFiles(this.ghService.$currUsername() ?? '');
 
-    const _rawPosts = await Promise.all(
-      _files.map(async (p) => await this.marked.parse(p)),
-    );
-
     const _parsed = (
-      await Promise.all(_rawPosts.map(async (p) => await this.parsePost(p)))
+      await Promise.all(_files.map(async (p) => await this.parsePost(p)))
     ).filter((p): p is Post => !!p);
 
     this.$posts.set(_parsed);
     return _parsed;
-  }
-
-  async refreshPosts(refresh = false): Promise<Post[]> {
-    this.$posts.set([]);
-    return await this.getParsedPosts(refresh);
   }
 
   private async parsePost(post: string): Promise<Post | undefined> {
