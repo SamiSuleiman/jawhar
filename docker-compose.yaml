@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  nest:
+    image: mmayss/jawhar_server:main
+    container_name: nest
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - db
+    networks:
+      - screamfeed_network
