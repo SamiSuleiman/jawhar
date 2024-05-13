@@ -44,3 +44,17 @@ h6 {
   @apply border-gray-500;
   @apply text-sm;
 }
+
+blockquote {
+  @apply p-4;
+  @apply my-4;
+  @apply border-s-4;
+  @apply border-primary;
+
+  & p {
+    @apply text-sm;
+    @apply italic;
+    @apply font-medium;
+    @apply leading-relaxed;
+  }
+}
