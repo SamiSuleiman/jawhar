@@ -2,3 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 @import "../node_modules/highlight.js/styles/github-dark.css";
+
+h1 {
+  @apply text-3xl;
+  @apply mb-4;
+  @apply border-b;
+  @apply border-gray-500;
+}
+
+h2 {
+  @apply text-2xl;
+  @apply mb-4;
+  @apply border-b;
+  @apply border-gray-500;
+}
+
+h3 {
+  @apply text-xl;
+  @apply mb-4;
+  @apply border-b;
+  @apply border-gray-500;
+}
+
+h4 {
+  @apply mb-4;
+  @apply border-b;
+  @apply border-gray-500;
+  @apply text-lg;
+}
+
+h5 {
+  @apply mb-4;
+  @apply border-b;
+  @apply border-gray-500;
+  @apply text-base;
+}
+
+h6 {
+  @apply mb-4;
+  @apply border-b;
+  @apply border-gray-500;
+  @apply text-sm;
+}
