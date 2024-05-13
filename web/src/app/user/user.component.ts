@@ -2,12 +2,11 @@ import { Component, OnInit, inject } from '@angular/core';
 import { NavbarComponent } from '../ui/navbar.component';
 import { Router, RouterLink } from '@angular/router';
 import { GithubService } from '../github/github.service';
-import { container } from '../app.consts';
 
 @Component({
   template: `
     <app-navbar>
-      <div class="flex items-center lg:gap-6">
+      <div class="flex items-center lg:gap-6 mb-4">
         <div class="flex items-center">
           <li><a [routerLink]="['/user']">/user</a></li>
           <li><a [routerLink]="['/posts']">/posts</a></li>
@@ -18,15 +17,15 @@ import { container } from '../app.consts';
         </li>
       </div>
     </app-navbar>
-    <div [class]="container">
+    <div>
       @if (ghService.$profile(); as profile) {
         <div class="flex flex-col items-center">
           <div class="avatar">
-            <div class="w-24 rounded">
+            <div class="w-32 rounded">
               <img [src]="profile.avatarUrl" />
             </div>
           </div>
-          <h1>{{ profile.name }}</h1>
+          <p class="font-bold text-2xl">{{ profile.name }}</p>
           <p>posts: {{ ghService.$gistFiles().length }}</p>
         </div>
       } @else {
@@ -42,8 +41,6 @@ import { container } from '../app.consts';
 export class UserComponent implements OnInit {
   private readonly router = inject(Router);
   readonly ghService = inject(GithubService);
-
-  readonly container = container;
 
   ngOnInit(): void {
     if (!this.ghService.$profile()) this.router.navigate(['search']);

@@ -3,7 +3,6 @@ import { NavbarComponent } from '../ui/navbar.component';
 import { FormsModule } from '@angular/forms';
 import { GithubService } from '../github/github.service';
 import { Router } from '@angular/router';
-import { container } from '../app.consts';
 
 @Component({
   template: `
