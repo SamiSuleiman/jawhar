@@ -9,3 +9,12 @@ services:
       - ./.env
     ports:
       - "127.0.0.1:3000:3000"
+
+  web:
+    image: mmayss/jawhar_web:master
+    container_name: web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:4200:4200"
+    depends_on:
+      - nest

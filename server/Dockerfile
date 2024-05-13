@@ -4,8 +4,8 @@ ARG IMG=node:20-alpine
 FROM ${IMG} AS prod-build
 WORKDIR /app
 COPY . .
-RUN yarn --frozen-lockfile
-RUN yarn build
+RUN npm ci --only=production
+RUN npm run build
 
 # prod stage
 FROM ${IMG} AS prod
