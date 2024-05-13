@@ -18,4 +18,3 @@ ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
 CMD [ "node", "--max-old-space-size=8192", "/app/dist/main.js" ]
-
