@@ -32,6 +32,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem('jawhar_tokens');
     this.$tokens.set(undefined);
+    this.router.navigate(['/auth']);
   }
 
   private getTokensFromLocalStorage(): {

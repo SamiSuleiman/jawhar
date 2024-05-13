@@ -60,8 +60,9 @@ export class GithubService {
         name: data.name ?? data.login,
         avatarUrl: data.avatar_url,
       } as Profile);
-    } catch {
+    } catch (e: any) {
       this.$err.set(true);
+      if (e.message.includes('Bad credentials')) this.authService.logout();
     }
   }
 
@@ -97,8 +98,9 @@ export class GithubService {
           tap((files) => this.$gistFiles.set(files)),
         ),
       );
-    } catch {
+    } catch (e: any) {
       this.$err.set(true);
+      if (e.message.includes('Bad credentials')) this.authService.logout();
     }
   }
 }
