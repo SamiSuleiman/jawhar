@@ -1,4 +1,11 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { GithubService } from '../github/github.service';
 import { NavbarComponent } from '../ui/navbar.component';
@@ -12,7 +19,7 @@ import { AuthService } from '../auth/auth.service';
       <div class="flex items-center lg:gap-6 mb-4">
         <div class="flex items-center">
           <li><a [routerLink]="['/user']">/user</a></li>
-          <li><a [routerLink]="['/posts']">/posts</a></li>
+          <li><a [routerLink]="['/posts']">\\posts</a></li>
           <li><a [routerLink]="['/tags']">/tags</a></li>
         </div>
         <li class="underline decoration-wavy font-bold">
@@ -46,6 +53,7 @@ import { AuthService } from '../auth/auth.service';
   selector: 'app-post-list',
   standalone: true,
   imports: [NavbarComponent, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PostListComponent implements OnInit {
   private readonly router = inject(Router);

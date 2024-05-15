@@ -1,4 +1,4 @@
-import { Injectable, computed, inject, signal } from '@angular/core';
+import { Injectable, computed, inject } from '@angular/core';
 import { PostService } from '../posts/post.service';
 
 @Injectable({

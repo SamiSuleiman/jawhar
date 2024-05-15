@@ -1,4 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { NavbarComponent } from '../ui/navbar.component';
 import { Router, RouterLink } from '@angular/router';
 import { TagService } from './tag.service';
@@ -12,7 +17,7 @@ import { AuthService } from '../auth/auth.service';
         <div class="flex items-center">
           <li><a [routerLink]="['/user']">/user</a></li>
           <li><a [routerLink]="['/posts']">/posts</a></li>
-          <li><a [routerLink]="['/tags']">/tags</a></li>
+          <li><a [routerLink]="['/tags']">\\tags</a></li>
         </div>
         <li class="underline decoration-wavy font-bold">
           <a [routerLink]="['/search']">exit</a>
@@ -38,6 +43,7 @@ import { AuthService } from '../auth/auth.service';
   selector: 'app-tag-list',
   standalone: true,
   imports: [NavbarComponent, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagListComponent implements OnInit {
   private readonly ghService = inject(GithubService);

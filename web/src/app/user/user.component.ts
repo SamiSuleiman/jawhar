@@ -1,4 +1,9 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { NavbarComponent } from '../ui/navbar.component';
 import { Router, RouterLink } from '@angular/router';
 import { GithubService } from '../github/github.service';
@@ -9,7 +14,7 @@ import { AuthService } from '../auth/auth.service';
     <app-navbar>
       <div class="flex items-center lg:gap-6 mb-4">
         <div class="flex items-center">
-          <li><a [routerLink]="['/user']">/user</a></li>
+          <li><a [routerLink]="['/user']">\\user</a></li>
           <li><a [routerLink]="['/posts']">/posts</a></li>
           <li><a [routerLink]="['/tags']">/tags</a></li>
         </div>
@@ -38,6 +43,7 @@ import { AuthService } from '../auth/auth.service';
   selector: 'app-user',
   standalone: true,
   imports: [NavbarComponent, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent implements OnInit {
   private readonly router = inject(Router);
