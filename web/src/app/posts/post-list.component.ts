@@ -72,6 +72,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
               - <span>{{ post.title }}</span>
             </a>
           </li>
+        } @empty {
+          <li>No posts found.</li>
         }
       </ul>
     </div>

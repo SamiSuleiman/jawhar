@@ -59,6 +59,8 @@ import { AsyncPipe } from '@angular/common';
               - <span>{{ tag }}</span>
             </a>
           </li>
+        } @empty {
+          <li>No tags found.</li>
         }
       </ul>
     </div>
