@@ -3,10 +3,12 @@ import {
   Component,
   OnInit,
   inject,
+  input,
 } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
 import { NavbarComponent } from '../ui/navbar.component';
 import { RouterLink } from '@angular/router';
+import { TagService } from './tag.service';
 
 @Component({
   template: `
@@ -25,7 +27,17 @@ import { RouterLink } from '@angular/router';
 
     <div
       class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center"
-    ></div>
+    >
+      <ul class="flex flex-col gap-2">
+        @for (post of tagService.getTagPosts($tag()); track post) {
+          <li class="hover:underline">
+            <a [routerLink]="['/posts', post.title]">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </div>
   `,
   styles: ``,
   selector: 'app-tags',
@@ -35,6 +47,9 @@ import { RouterLink } from '@angular/router';
 })
 export class TagComponent implements OnInit {
   private readonly authService = inject(AuthService);
+  readonly tagService = inject(TagService);
+
+  $tag = input.required<string>({ alias: 'tag' });
 
   ngOnInit(): void {
     this.authService.login();

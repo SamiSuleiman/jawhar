@@ -1,5 +1,6 @@
 import { Injectable, computed, inject } from '@angular/core';
 import { PostService } from '../posts/post.service';
+import { Post } from '../posts/post.model';
 
 @Injectable({
   providedIn: 'root',
@@ -14,4 +15,8 @@ export class TagService {
     console.log('tags', Array.from(_tags));
     return Array.from(_tags);
   });
+
+  getTagPosts(tag: string): Post[] {
+    return this.postService.$posts().filter((p) => p.tags.includes(tag));
+  }
 }
