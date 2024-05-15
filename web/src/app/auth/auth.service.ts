@@ -1,5 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -10,29 +11,29 @@ export class AuthService {
     undefined,
   );
 
-  login(): boolean {
+  login(): void {
     const _tokensFromURL = this.getTokensFromURL();
     const _tokensFromLocalStorage = this.getTokensFromLocalStorage();
 
     if (_tokensFromLocalStorage) {
       this.$tokens.set(_tokensFromLocalStorage);
-      return true;
+      return;
     }
 
     if (_tokensFromURL) {
       localStorage.setItem('jawhar_tokens', JSON.stringify(_tokensFromURL));
       this.$tokens.set(_tokensFromURL);
       this.router.navigate(['/search']);
-      return true;
+      return;
     }
 
-    return false;
+    window.location.href = `${environment.serverUrl}/auth/github`;
   }
 
   logout() {
     localStorage.removeItem('jawhar_tokens');
     this.$tokens.set(undefined);
-    this.router.navigate(['/auth']);
+    this.router.navigate(['/']);
   }
 
   private getTokensFromLocalStorage(): {

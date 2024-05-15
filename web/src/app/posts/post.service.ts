@@ -25,7 +25,11 @@ export class PostService {
     breaks: true,
   });
 
-  private readonly $posts = signal<Post[]>([]);
+  constructor() {
+    this.getParsedPosts();
+  }
+
+  readonly $posts = signal<Post[]>([]);
 
   async refreshPosts(refresh = false): Promise<Post[]> {
     this.$posts.set([]);

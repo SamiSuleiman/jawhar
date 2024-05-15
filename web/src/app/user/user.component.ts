@@ -1,16 +1,22 @@
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { NavbarComponent } from '../ui/navbar.component';
 import { Router, RouterLink } from '@angular/router';
 import { GithubService } from '../github/github.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   template: `
     <app-navbar>
       <div class="flex items-center lg:gap-6 mb-4">
         <div class="flex items-center">
-          <li><a [routerLink]="['/user']">/user</a></li>
+          <li><a [routerLink]="['/user']">\\user</a></li>
           <li><a [routerLink]="['/posts']">/posts</a></li>
-          <li><a>/tags</a></li>
+          <li><a [routerLink]="['/tags']">/tags</a></li>
         </div>
         <li class="underline decoration-wavy font-bold">
           <a [routerLink]="['/search']">exit</a>
@@ -37,12 +43,15 @@ import { GithubService } from '../github/github.service';
   selector: 'app-user',
   standalone: true,
   imports: [NavbarComponent, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent implements OnInit {
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
   readonly ghService = inject(GithubService);
 
   ngOnInit(): void {
+    this.authService.login();
     if (!this.ghService.$profile()) this.router.navigate(['search']);
   }
 }

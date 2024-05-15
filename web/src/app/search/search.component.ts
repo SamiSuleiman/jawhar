@@ -75,6 +75,6 @@ export class SearchComponent implements OnInit {
     const _res = await this.ghService.init(this.name);
     this.$isLoading.set(false);
 
-    if (_res) this.router.navigate(['user']);
+    if (_res) this.router.navigate(['/user']);
   }
 }

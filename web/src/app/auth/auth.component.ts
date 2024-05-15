@@ -1,20 +1,21 @@
-import { Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  inject,
+} from '@angular/core';
 import { AuthService } from './auth.service';
-import { Router } from '@angular/router';
 
 @Component({
   template: ``,
-  styles: ``,
   selector: 'app-auth',
   standalone: true,
-  imports: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AuthComponent {
+export class AuthComponent implements OnInit {
   private readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
 
-  constructor() {
-    const _is = this.authService.login();
-    if (_is) this.router.navigate(['/search']);
+  ngOnInit(): void {
+    this.authService.login();
   }
 }
