@@ -1,15 +1,14 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { AuthService } from './auth.service';
-import { Router } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
-  template: ``,
+  template: ` <p>tags works!</p> `,
   styles: ``,
-  selector: 'app-auth',
+  selector: 'app-tags',
   standalone: true,
   imports: [],
 })
-export class AuthComponent implements OnInit {
+export class TagComponent implements OnInit {
   private readonly authService = inject(AuthService);
 
   ngOnInit(): void {

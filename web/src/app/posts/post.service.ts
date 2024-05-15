@@ -25,7 +25,7 @@ export class PostService {
     breaks: true,
   });
 
-  private readonly $posts = signal<Post[]>([]);
+  readonly $posts = signal<Post[]>([]);
 
   async refreshPosts(refresh = false): Promise<Post[]> {
     this.$posts.set([]);

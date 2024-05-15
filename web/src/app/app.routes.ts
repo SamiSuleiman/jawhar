@@ -4,22 +4,33 @@ import { PostListComponent } from './posts/post-list.component';
 import { PostComponent } from './posts/post.component';
 import { SearchComponent } from './search/search.component';
 import { UserComponent } from './user/user.component';
-import { authGuard } from './auth/auth.guard';
+import { TagListComponent } from './tags/tag-list.component';
+import { TagComponent } from './tags/tag.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: AuthComponent,
-    canActivate: [authGuard],
   },
   {
     path: 'search',
     component: SearchComponent,
-    canActivate: [authGuard],
+  },
+  {
+    path: 'tags',
+    children: [
+      {
+        path: '',
+        component: TagListComponent,
+      },
+      {
+        path: ':tag',
+        component: TagComponent,
+      },
+    ],
   },
   {
     path: 'posts',
-    canActivate: [authGuard],
     children: [
       {
         path: '',

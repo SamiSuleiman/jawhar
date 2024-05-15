@@ -1,7 +1,8 @@
-import { Component, OnInit, computed, inject, input } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { NavbarComponent } from '../ui/navbar.component';
 import { Router, RouterLink } from '@angular/router';
-import { PostService } from './post.service';
+import { TagService } from './tag.service';
+import { GithubService } from '../github/github.service';
 import { AuthService } from '../auth/auth.service';
 
 @Component({
@@ -18,30 +19,34 @@ import { AuthService } from '../auth/auth.service';
         </li>
       </div>
     </app-navbar>
-    <div class="p-2 overflow-x-scroll">
-      <h1 class="font-bold">{{ $post()?.title }}</h1>
-      <div [innerHTML]="$post()?.content ?? ''"></div>
+
+    <div
+      class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center"
+    >
+      <ul class="flex flex-col gap-2">
+        @for (tag of tagService.$tags(); track tag) {
+          <li class="hover:underline">
+            <a [routerLink]="['/tags', tag]">
+              - <span>{{ tag }}</span>
+            </a>
+          </li>
+        }
+      </ul>
     </div>
   `,
   styles: ``,
-  selector: 'app-post',
+  selector: 'app-tag-list',
   standalone: true,
   imports: [NavbarComponent, RouterLink],
 })
-export class PostComponent implements OnInit {
-  private readonly postService = inject(PostService);
+export class TagListComponent implements OnInit {
+  private readonly ghService = inject(GithubService);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
-
-  $title = input.required<string>({ alias: 'title' });
-
-  $post = computed(() => {
-    const _post = this.postService.getPost(this.$title());
-    if (!_post) this.router.navigate(['/posts']);
-    return _post;
-  });
+  readonly tagService = inject(TagService);
 
   ngOnInit(): void {
     this.authService.login();
+    if (!this.ghService.$profile()) this.router.navigate(['search']);
   }
 }

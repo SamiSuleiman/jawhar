@@ -4,6 +4,7 @@ import { GithubService } from '../github/github.service';
 import { NavbarComponent } from '../ui/navbar.component';
 import { Post } from './post.model';
 import { PostService } from './post.service';
+import { AuthService } from '../auth/auth.service';
 
 @Component({
   template: `
@@ -12,10 +13,10 @@ import { PostService } from './post.service';
         <div class="flex items-center">
           <li><a [routerLink]="['/user']">/user</a></li>
           <li><a [routerLink]="['/posts']">/posts</a></li>
-          <li><a>/tags</a></li>
+          <li><a [routerLink]="['/tags']">/tags</a></li>
         </div>
         <li class="underline decoration-wavy font-bold">
-          <a [routerLink]="['/']">exit</a>
+          <a [routerLink]="['/search']">exit</a>
         </li>
       </div>
     </app-navbar>
@@ -49,6 +50,7 @@ import { PostService } from './post.service';
 export class PostListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly postService = inject(PostService);
+  private readonly authService = inject(AuthService);
   readonly ghService = inject(GithubService);
 
   readonly $isLoading = signal(false);
@@ -59,6 +61,7 @@ export class PostListComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.authService.login();
     if (!this.ghService.$profile()) this.router.navigate(['search']);
     this.$posts.set(await this.postService.refreshPosts());
   }
