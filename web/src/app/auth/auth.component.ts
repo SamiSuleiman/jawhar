@@ -5,6 +5,7 @@ import {
   inject,
 } from '@angular/core';
 import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   template: ``,
@@ -14,8 +15,10 @@ import { AuthService } from './auth.service';
 })
 export class AuthComponent implements OnInit {
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   ngOnInit(): void {
     this.authService.login();
+    this.router.navigate(['/search']);
   }
 }
