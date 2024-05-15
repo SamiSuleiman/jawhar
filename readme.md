@@ -26,7 +26,7 @@ CONTENT HERE
 #### Features
 
 - [x] View Posts/Post
-- [ ] Search Posts
-- [ ] View Posts by Tag
+- [x] Search Posts
+- [x] View Posts by Tag
 
 > jawhar - جَوْهَر: essense aka gist
