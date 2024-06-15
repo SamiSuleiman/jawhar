@@ -48,8 +48,8 @@ dependencies:
     specifier: ~7.8.0
     version: 7.8.1
   tslib:
-    specifier: ^2.3.0
-    version: 2.6.2
+    specifier: ^2.6.3
+    version: 2.6.3
   zone.js:
     specifier: ~0.14.6
     version: 0.14.6
@@ -335,7 +335,7 @@ packages:
       '@angular/core': 17.3.8
     dependencies:
       '@angular/core': 17.3.8(rxjs@7.8.1)(zone.js@0.14.6)
-      tslib: 2.6.2
+      tslib: 2.6.3
     dev: false
 
   /@angular/cli@18.0.2:
@@ -375,7 +375,7 @@ packages:
     dependencies:
       '@angular/core': 17.3.8(rxjs@7.8.1)(zone.js@0.14.6)
       rxjs: 7.8.1
-      tslib: 2.6.2
+      tslib: 2.6.3
     dev: false
 
   /@angular/compiler-cli@17.3.8(@angular/compiler@17.3.8)(typescript@5.4.5):
@@ -393,7 +393,7 @@ packages:
       convert-source-map: 1.9.0
       reflect-metadata: 0.2.2
       semver: 7.6.2
-      tslib: 2.6.2
+      tslib: 2.6.3
       typescript: 5.4.5
       yargs: 17.7.2
     transitivePeerDependencies:
@@ -410,7 +410,7 @@ packages:
         optional: true
     dependencies:
       '@angular/core': 17.3.8(rxjs@7.8.1)(zone.js@0.14.6)
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   /@angular/core@17.3.8(rxjs@7.8.1)(zone.js@0.14.6):
     resolution: {integrity: sha512-+tUQ+B1yVvNbczzaWBCgJWWIgZ2z+GVJWu+UNOHHWzdqD8qpXjuIkDfnhyLNeGvvXgsqey4u6ApFf2SoFYLjuA==}
@@ -420,7 +420,7 @@ packages:
       zone.js: ~0.14.0
     dependencies:
       rxjs: 7.8.1
-      tslib: 2.6.2
+      tslib: 2.6.3
       zone.js: 0.14.6
 
   /@angular/forms@17.3.8(@angular/common@17.3.8)(@angular/core@17.3.8)(@angular/platform-browser@17.3.8)(rxjs@7.8.1):
@@ -436,7 +436,7 @@ packages:
       '@angular/core': 17.3.8(rxjs@7.8.1)(zone.js@0.14.6)
       '@angular/platform-browser': 17.3.8(@angular/animations@17.3.8)(@angular/common@17.3.8)(@angular/core@17.3.8)
       rxjs: 7.8.1
-      tslib: 2.6.2
+      tslib: 2.6.3
     dev: false
 
   /@angular/platform-browser-dynamic@17.3.8(@angular/common@17.3.8)(@angular/compiler@17.3.8)(@angular/core@17.3.8)(@angular/platform-browser@17.3.8):
@@ -452,7 +452,7 @@ packages:
       '@angular/compiler': 17.3.8(@angular/core@17.3.8)
       '@angular/core': 17.3.8(rxjs@7.8.1)(zone.js@0.14.6)
       '@angular/platform-browser': 17.3.8(@angular/animations@17.3.8)(@angular/common@17.3.8)(@angular/core@17.3.8)
-      tslib: 2.6.2
+      tslib: 2.6.3
     dev: false
 
   /@angular/platform-browser@17.3.8(@angular/animations@17.3.8)(@angular/common@17.3.8)(@angular/core@17.3.8):
@@ -469,7 +469,7 @@ packages:
       '@angular/animations': 17.3.8(@angular/core@17.3.8)
       '@angular/common': 17.3.8(@angular/core@17.3.8)(rxjs@7.8.1)
       '@angular/core': 17.3.8(rxjs@7.8.1)(zone.js@0.14.6)
-      tslib: 2.6.2
+      tslib: 2.6.3
     dev: false
 
   /@angular/router@17.3.8(@angular/common@17.3.8)(@angular/core@17.3.8)(@angular/platform-browser@17.3.8)(rxjs@7.8.1):
@@ -485,7 +485,7 @@ packages:
       '@angular/core': 17.3.8(rxjs@7.8.1)(zone.js@0.14.6)
       '@angular/platform-browser': 17.3.8(@angular/animations@17.3.8)(@angular/common@17.3.8)(@angular/core@17.3.8)
       rxjs: 7.8.1
-      tslib: 2.6.2
+      tslib: 2.6.3
     dev: false
 
   /@babel/code-frame@7.24.2:
@@ -5432,7 +5432,7 @@ packages:
     dependencies:
       copy-anything: 2.0.6
       parse-node-version: 1.0.1
-      tslib: 2.6.2
+      tslib: 2.6.3
     optionalDependencies:
       errno: 0.1.8
       graceful-fs: 4.2.11
@@ -6761,7 +6761,7 @@ packages:
   /rxjs@7.8.1:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.6.3
 
   /safe-buffer@5.1.2:
     resolution: {integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==}
@@ -7440,6 +7440,10 @@ packages:
 
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
+    dev: true
+
+  /tslib@2.6.3:
+    resolution: {integrity: sha512-xNvxJEOUiWPGhUuUdQgAJPKOOJfGnIyKySOc09XkKsgdUV/3E2zvwZYdejjmRgPCgcym1juLH3226yA7sEFJKQ==}
 
   /tuf-js@2.2.1:
     resolution: {integrity: sha512-GwIJau9XaA8nLVbUXsN3IlFi7WmQ48gBUrl3FTkkL/XLu/POhBzfmX9hd33FNMX1qAsfl6ozO1iMmW9NC8YniA==}
