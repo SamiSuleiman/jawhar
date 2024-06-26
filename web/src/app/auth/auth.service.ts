@@ -2,19 +2,27 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { TokenRes } from './auth.model';
+import { HttpClient } from '@angular/common/http';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly router = inject(Router);
+  private readonly httpClient = inject(HttpClient);
   readonly $tokens = signal<TokenRes | undefined>(undefined);
 
-  login(): void {
+  // ! replace all the places were this is called with a isLoggedIn guard that verifies login only (tbd)
+  // ! except in the auth component this can stay as is
+  async login(): Promise<void> {
     const _tokensFromURL = this.getTokensFromURL();
     const _tokensFromLocalStorage = this.getTokensFromLocalStorage();
 
     if (_tokensFromLocalStorage) {
+      const _refreshedTokens = await this.refreshToken();
+      console.log(_refreshedTokens);
       this.$tokens.set(_tokensFromLocalStorage);
       return;
     }
@@ -33,6 +41,25 @@ export class AuthService {
     localStorage.removeItem('jawhar_tokens');
     this.$tokens.set(undefined);
     this.router.navigate(['/']);
+  }
+
+  isLoggedIn() {
+    // * verify the token with the server
+  }
+
+  async refreshToken(): Promise<TokenRes | undefined> {
+    const _tokens = this.getTokensFromLocalStorage();
+    if (!_tokens) {
+      this.logout();
+      return;
+    }
+
+    return await firstValueFrom(
+      this.httpClient.post<TokenRes>(
+        `${environment.serverUrl}/auth/github/refresh`,
+        _tokens
+      )
+    );
   }
 
   private getTokensFromLocalStorage(): TokenRes | null {

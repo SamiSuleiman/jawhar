@@ -47,6 +47,8 @@ export class GithubService {
   }
 
   private async getProfile(username: string): Promise<void> {
+    if (username.length === 0) return;
+
     try {
       this.$err.set(false);
 
@@ -90,13 +92,13 @@ export class GithubService {
                 this.$err.set(true);
                 return of(null);
               }),
-              filter((file): file is string => !!file),
-            ),
-          ),
+              filter((file): file is string => !!file)
+            )
+          )
         ).pipe(
           filter((file) => !!file),
-          tap((files) => this.$gistFiles.set(files)),
-        ),
+          tap((files) => this.$gistFiles.set(files))
+        )
       );
     } catch (e: any) {
       this.$err.set(true);
