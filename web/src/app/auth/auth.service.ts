@@ -1,15 +1,14 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { TokenRes } from './auth.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly router = inject(Router);
-  readonly $tokens = signal<{ access: string; refresh: string } | undefined>(
-    undefined,
-  );
+  readonly $tokens = signal<TokenRes | undefined>(undefined);
 
   login(): void {
     const _tokensFromURL = this.getTokensFromURL();
@@ -36,27 +35,18 @@ export class AuthService {
     this.router.navigate(['/']);
   }
 
-  private getTokensFromLocalStorage(): {
-    access: string;
-    refresh: string;
-  } | null {
+  private getTokensFromLocalStorage(): TokenRes | null {
     const _tokens = localStorage.getItem('jawhar_tokens');
-    if (_tokens) {
-      return JSON.parse(_tokens) as { access: string; refresh: string };
-    }
-
-    return null;
+    return _tokens
+      ? (JSON.parse(_tokens) as { access: string; refresh: string })
+      : null;
   }
 
-  private getTokensFromURL(): { access: string; refresh: string } | null {
+  private getTokensFromURL(): TokenRes | null {
     const _url = new URL(window.location.href);
     const _access = _url.searchParams.get('access');
     const _refresh = _url.searchParams.get('refresh');
 
-    if (_access && _refresh) {
-      return { access: _access, refresh: _refresh };
-    }
-
-    return null;
+    return _access && _refresh ? { access: _access, refresh: _refresh } : null;
   }
 }

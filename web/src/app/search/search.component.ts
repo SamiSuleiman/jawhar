@@ -21,33 +21,31 @@ import { Router } from '@angular/router';
             />
           </label>
           @if ($isLoading()) {
-            <button class="btn btn-square">
-              <span class="loading loading-spinner"></span>
-            </button>
+          <button class="btn btn-square">
+            <span class="loading loading-spinner"></span>
+          </button>
           } @else {
-            <button class="btn rounded-none" (click)="onSubmit()">
-              submit
-            </button>
+          <button class="btn rounded-none" (click)="onSubmit()">submit</button>
           }
         </div>
 
         @if (ghService.$err()) {
-          <div role="alert" class="alert alert-error rounded-none">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="stroke-current shrink-0 h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <span>error!</span>
-          </div>
+        <div role="alert" class="alert alert-error rounded-none">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="stroke-current shrink-0 h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>error!</span>
+        </div>
         }
       </div>
     </div>
