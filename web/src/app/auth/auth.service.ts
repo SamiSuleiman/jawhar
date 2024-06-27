@@ -59,16 +59,12 @@ export class AuthService {
     this.redirectToLogin();
   }
 
-  isLoggedIn(): boolean {
-    return !!this.getTokensFromLocalStorage();
-  }
-
   async refreshToken(): Promise<TokenRes | undefined> {
     if (this.$isRefreshing()) return;
-
     this.$isRefreshing.set(true);
     const _tokens = this.getTokensFromLocalStorage();
     if (!_tokens) {
+      this.$isRefreshing.set(false);
       this.logout();
       return;
     }
@@ -83,7 +79,7 @@ export class AuthService {
     );
   }
 
-  private getTokensFromLocalStorage(): TokenRes | null {
+  getTokensFromLocalStorage(): TokenRes | null {
     const _tokens = localStorage.getItem('jawhar_tokens');
     return _tokens
       ? (JSON.parse(_tokens) as { access: string; refresh: string })

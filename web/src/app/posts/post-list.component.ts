@@ -25,7 +25,7 @@ import { PostService } from './post.service';
           <li><a [routerLink]="['/tags']">/tags</a></li>
         </div>
         <li class="underline decoration-wavy font-bold">
-          <a [routerLink]="['/search']">exit</a>
+          <a [routerLink]="['/']">exit</a>
         </li>
       </div>
     </app-navbar>
@@ -112,8 +112,9 @@ export class PostListComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    if (!this.ghService.$profile()) this.router.navigate(['search']);
-    this._posts$.next(await this.postService.refreshPosts());
+    // ! wrong thing?
+    if (!this.ghService.$profile()) this.router.navigate(['/']);
+    else this._posts$.next(await this.postService.refreshPosts());
   }
 
   async refreshPosts(): Promise<void> {

@@ -19,7 +19,7 @@ import { PostService } from './post.service';
           <li><a [routerLink]="['/tags']">/tags</a></li>
         </div>
         <li class="underline decoration-wavy font-bold">
-          <a [routerLink]="['/search']">exit</a>
+          <a [routerLink]="['/']">exit</a>
         </li>
       </div>
     </app-navbar>

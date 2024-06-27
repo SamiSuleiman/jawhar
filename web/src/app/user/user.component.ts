@@ -18,7 +18,7 @@ import { NavbarComponent } from '../ui/navbar.component';
           <li><a [routerLink]="['/tags']">/tags</a></li>
         </div>
         <li class="underline decoration-wavy font-bold">
-          <a [routerLink]="['/search']">exit</a>
+          <a [routerLink]="['/']">exit</a>
         </li>
       </div>
     </app-navbar>
