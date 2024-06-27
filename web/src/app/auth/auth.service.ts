@@ -12,6 +12,7 @@ export class AuthService {
   private readonly router = inject(Router);
   private readonly httpClient = inject(HttpClient);
   private readonly $isRefreshing = signal(false);
+  readonly $shouldLogin = signal(false);
   readonly $tokens = signal<TokenRes | undefined>(undefined);
 
   constructor() {
