@@ -21,7 +21,7 @@ export class GithubService {
   private octokit: any;
   readonly $gistFiles = signal<string[]>([]);
   readonly $profile = signal<Profile | undefined>(undefined);
-  readonly $err = signal<boolean>(false);
+  readonly $err = signal<string | undefined>(undefined);
   readonly $currUsername = signal<string | undefined>(undefined);
 
   async init(username: string): Promise<boolean> {
@@ -50,7 +50,7 @@ export class GithubService {
     if (username.length === 0) return;
 
     try {
-      this.$err.set(false);
+      this.$err.set(undefined);
 
       const { data } = (await this.octokit.rest.users.getByUsername({
         username,
@@ -63,14 +63,15 @@ export class GithubService {
         avatarUrl: data.avatar_url,
       } as Profile);
     } catch (e: any) {
-      this.$err.set(true);
-      if (e.message.includes('Bad credentials')) this.authService.logout();
+      e.message.includes('Bad credentials')
+        ? this.$err.set('You are not logged in :(')
+        : this.$err.set('An error occurred. Please try again later.');
     }
   }
 
   async getGistFiles(username: string): Promise<void> {
     try {
-      this.$err.set(false);
+      this.$err.set(undefined);
       const { data } = await this.octokit.rest.gists.listForUser({
         username,
       });
@@ -83,13 +84,13 @@ export class GithubService {
           rawGistFileUrls.push(file.raw_url);
       });
 
-      this.$err.set(false);
+      this.$err.set(undefined);
       await firstValueFrom(
         combineLatest(
           rawGistFileUrls.map((url) =>
             this.http.get(url, { responseType: 'text' }).pipe(
               catchError(() => {
-                this.$err.set(true);
+                this.$err.set("Couldn't fetch the gist files.");
                 return of(null);
               }),
               filter((file): file is string => !!file)
@@ -101,7 +102,7 @@ export class GithubService {
         )
       );
     } catch (e: any) {
-      this.$err.set(true);
+      this.$err.set('An error occurred. Please try again later.');
       if (e.message.includes('Bad credentials')) this.authService.logout();
     }
   }

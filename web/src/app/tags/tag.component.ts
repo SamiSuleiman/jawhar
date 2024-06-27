@@ -1,13 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnInit,
   inject,
   input,
 } from '@angular/core';
-import { AuthService } from '../auth/auth.service';
-import { NavbarComponent } from '../ui/navbar.component';
 import { RouterLink } from '@angular/router';
+import { NavbarComponent } from '../ui/navbar.component';
 import { TagService } from './tag.service';
 
 @Component({
@@ -30,11 +28,11 @@ import { TagService } from './tag.service';
     >
       <ul class="flex flex-col gap-2">
         @for (post of tagService.getTagPosts($tag()); track post) {
-          <li class="hover:underline">
-            <a [routerLink]="['/posts', post.title]">
-              - <span>{{ post.title }}</span>
-            </a>
-          </li>
+        <li class="hover:underline">
+          <a [routerLink]="['/posts', post.title]">
+            - <span>{{ post.title }}</span>
+          </a>
+        </li>
         }
       </ul>
     </div>
@@ -45,13 +43,8 @@ import { TagService } from './tag.service';
   imports: [NavbarComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TagComponent implements OnInit {
-  private readonly authService = inject(AuthService);
+export class TagComponent {
   readonly tagService = inject(TagService);
 
   $tag = input.required<string>({ alias: 'tag' });
-
-  ngOnInit(): void {
-    this.authService.login();
-  }
 }

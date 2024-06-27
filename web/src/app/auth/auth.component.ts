@@ -16,6 +16,7 @@ export class AuthComponent implements OnInit {
   private readonly authService = inject(AuthService);
 
   ngOnInit(): void {
+    console.log('AuthComponent: ngOnInit()');
     this.authService.login();
   }
 }

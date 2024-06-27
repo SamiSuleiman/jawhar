@@ -4,10 +4,9 @@ import {
   OnInit,
   inject,
 } from '@angular/core';
-import { NavbarComponent } from '../ui/navbar.component';
 import { Router, RouterLink } from '@angular/router';
 import { GithubService } from '../github/github.service';
-import { AuthService } from '../auth/auth.service';
+import { NavbarComponent } from '../ui/navbar.component';
 
 @Component({
   template: `
@@ -25,17 +24,17 @@ import { AuthService } from '../auth/auth.service';
     </app-navbar>
     <div>
       @if (ghService.$profile(); as profile) {
-        <div class="flex flex-col items-center">
-          <div class="avatar">
-            <div class="w-32 rounded">
-              <img [src]="profile.avatarUrl" />
-            </div>
+      <div class="flex flex-col items-center">
+        <div class="avatar">
+          <div class="w-32 rounded">
+            <img [src]="profile.avatarUrl" />
           </div>
-          <p class="font-bold text-2xl">{{ profile.name }}</p>
-          <p>posts: {{ ghService.$gistFiles().length }}</p>
         </div>
+        <p class="font-bold text-2xl">{{ profile.name }}</p>
+        <p>posts: {{ ghService.$gistFiles().length }}</p>
+      </div>
       } @else {
-        <p>no profile.</p>
+      <p>no profile.</p>
       }
     </div>
   `,
@@ -47,11 +46,9 @@ import { AuthService } from '../auth/auth.service';
 })
 export class UserComponent implements OnInit {
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
   readonly ghService = inject(GithubService);
 
   ngOnInit(): void {
-    this.authService.login();
     if (!this.ghService.$profile()) this.router.navigate(['search']);
   }
 }

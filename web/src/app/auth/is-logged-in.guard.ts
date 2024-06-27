@@ -3,8 +3,7 @@ import { CanActivateFn } from '@angular/router';
 import { AuthService } from './auth.service';
 import { of } from 'rxjs';
 
-export const isLoggedInGuard: CanActivateFn = (route, state) => {
+export const isLoggedInGuard: CanActivateFn = () => {
   const _authService = inject(AuthService);
-  console.log('isLoggedInGuard', _authService);
-  return of(true);
+  return _authService.isLoggedIn();
 };

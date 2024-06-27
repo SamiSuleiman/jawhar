@@ -1,18 +1,17 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
   inject,
 } from '@angular/core';
-import { NavbarComponent } from '../ui/navbar.component';
-import { Router, RouterLink } from '@angular/router';
-import { TagService } from './tag.service';
-import { GithubService } from '../github/github.service';
-import { AuthService } from '../auth/auth.service';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { BehaviorSubject, debounceTime, skip, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AsyncPipe } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { BehaviorSubject, debounceTime, skip, tap } from 'rxjs';
+import { GithubService } from '../github/github.service';
+import { NavbarComponent } from '../ui/navbar.component';
+import { TagService } from './tag.service';
 
 @Component({
   template: `
@@ -54,13 +53,13 @@ import { AsyncPipe } from '@angular/common';
     >
       <ul class="flex flex-col gap-2">
         @for (tag of _tags$ | async; track tag) {
-          <li class="hover:underline">
-            <a [routerLink]="['/tags', tag]">
-              - <span>{{ tag }}</span>
-            </a>
-          </li>
+        <li class="hover:underline">
+          <a [routerLink]="['/tags', tag]">
+            - <span>{{ tag }}</span>
+          </a>
+        </li>
         } @empty {
-          <li>No tags found.</li>
+        <li>No tags found.</li>
         }
       </ul>
     </div>
@@ -74,7 +73,6 @@ import { AsyncPipe } from '@angular/common';
 export class TagListComponent implements OnInit {
   private readonly ghService = inject(GithubService);
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
   readonly tagService = inject(TagService);
 
   readonly _tags$ = new BehaviorSubject<string[]>([]);
@@ -92,17 +90,16 @@ export class TagListComponent implements OnInit {
           else
             this._tags$.next(
               _originalTags.filter((tag) =>
-                tag.toLowerCase().includes(val.toLowerCase()),
-              ),
+                tag.toLowerCase().includes(val.toLowerCase())
+              )
             );
         }),
-        takeUntilDestroyed(),
+        takeUntilDestroyed()
       )
       .subscribe();
   }
 
   ngOnInit(): void {
-    this.authService.login();
     if (!this.ghService.$profile()) this.router.navigate(['search']);
     this._tags$.next(this.tagService.$tags());
   }

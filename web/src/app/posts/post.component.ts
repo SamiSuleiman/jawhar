@@ -1,15 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnInit,
   computed,
   inject,
   input,
 } from '@angular/core';
-import { NavbarComponent } from '../ui/navbar.component';
 import { Router, RouterLink } from '@angular/router';
+import { NavbarComponent } from '../ui/navbar.component';
 import { PostService } from './post.service';
-import { AuthService } from '../auth/auth.service';
 
 @Component({
   template: `
@@ -36,10 +34,9 @@ import { AuthService } from '../auth/auth.service';
   imports: [NavbarComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PostComponent implements OnInit {
+export class PostComponent {
   private readonly postService = inject(PostService);
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
 
   $title = input.required<string>({ alias: 'title' });
 
@@ -48,8 +45,4 @@ export class PostComponent implements OnInit {
     if (!_post) this.router.navigate(['/posts']);
     return _post;
   });
-
-  ngOnInit(): void {
-    this.authService.login();
-  }
 }
