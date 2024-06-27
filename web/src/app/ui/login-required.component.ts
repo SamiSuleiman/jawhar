@@ -13,8 +13,8 @@ import {
   template: `
     <dialog #modal class="modal" [ngClass]="[$isOpen() ? '' : 'hidden']">
       <div class="modal-box">
-        <h3 class="text-lg font-bold">You need to log in!</h3>
-        <button class="btn" (click)="$login.emit()">Login</button>
+        <h3 class="text-lg font-bold">You need to be logged in!</h3>
+        <button class="btn" (click)="$login.emit()">Login with GitHub</button>
       </div>
     </dialog>
   `,
