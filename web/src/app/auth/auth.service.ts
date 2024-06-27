@@ -16,12 +16,15 @@ export class AuthService {
   readonly $tokens = signal<TokenRes | undefined>(undefined);
 
   constructor() {
-    interval(1000 * 60 * 5)
+    interval(1000 * 60)
       .pipe(
         switchMap(async () => this.refreshToken()),
         tap((tokens) => {
           if (!tokens) this.logout();
-          else this.$tokens.set(tokens);
+          else {
+            this.$tokens.set(tokens);
+            localStorage.setItem('jawhar_tokens', JSON.stringify(tokens));
+          }
         })
       )
       .subscribe();
@@ -37,6 +40,7 @@ export class AuthService {
       if (!_refreshedTokens) this.logout();
       else {
         this.$tokens.set(_refreshedTokens);
+        localStorage.setItem('jawhar_tokens', JSON.stringify(_refreshedTokens));
         this.router.navigate(['/']);
       }
 
