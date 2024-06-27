@@ -1,4 +1,5 @@
-> Still under development
+> Still under development!  
+> Still subject to change
 
 ### jawhar - جوهر
 
