@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, firstValueFrom, interval, of, switchMap, tap } from 'rxjs';
+import { catchError, firstValueFrom, of, tap, timer } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { TokenRes } from './auth.model';
 
@@ -16,14 +16,14 @@ export class AuthService {
   readonly $tokens = signal<TokenRes | undefined>(undefined);
 
   constructor() {
-    interval(1000 * 60)
+    timer(100000, 100000)
       .pipe(
-        switchMap(async () => this.refreshToken()),
-        tap((tokens) => {
-          if (!tokens) this.logout();
+        tap(async () => {
+          const _tokens = await this.refreshToken();
+          if (!_tokens) this.logout();
           else {
-            this.$tokens.set(tokens);
-            localStorage.setItem('jawhar_tokens', JSON.stringify(tokens));
+            this.$tokens.set(_tokens);
+            localStorage.setItem('jawhar_tokens', JSON.stringify(_tokens));
           }
         })
       )

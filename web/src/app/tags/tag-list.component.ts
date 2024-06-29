@@ -72,11 +72,11 @@ export class TagListComponent implements OnInit {
   readonly $tags = signal<string[]>([]);
 
   async ngOnInit(): Promise<void> {
-    await this.getPosts(false);
+    const _tags = await this.getTags(false);
+    this.$tags.set(_tags);
 
     this.searchCtrl.valueChanges
       .pipe(
-        startWith(''),
         debounceTime(200),
         tap((search) => {
           const _tags = this.$internalTags();
@@ -88,14 +88,15 @@ export class TagListComponent implements OnInit {
               : _tags
           );
         }),
-        takeUntilDestroyed()
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe();
   }
 
-  async getPosts(refresh: boolean): Promise<void> {
+  async getTags(refresh: boolean): Promise<string[]> {
     const _tags = await this.tagService.getUserTags(this.$username(), refresh);
     this.$internalTags.set(_tags);
+    return _tags;
   }
 
   goto(tag: string) {

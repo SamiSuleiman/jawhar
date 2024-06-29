@@ -8,14 +8,14 @@ import {
   input,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { debounceTime, skip, startWith, tap } from 'rxjs';
+import { debounceTime, startWith, tap } from 'rxjs';
+import { SearchIconComponent } from '../ui/icons/search-icon.component';
 import { NavbarComponent } from '../ui/navbar.component';
 import { Post } from './post.model';
 import { PostService } from './post.service';
-import { SearchIconComponent } from '../ui/icons/search-icon.component';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   template: `
@@ -82,11 +82,11 @@ export class PostListComponent implements OnInit {
   readonly $posts = signal<Post[]>([]);
 
   async ngOnInit(): Promise<void> {
-    await this.getPosts(false);
+    const _posts = await this.getPosts(false);
+    this.$posts.set(_posts);
 
     this.searchCtrl.valueChanges
       .pipe(
-        startWith(''),
         debounceTime(200),
         tap((search) => {
           const _posts = this.$internalPosts();
@@ -103,12 +103,13 @@ export class PostListComponent implements OnInit {
       .subscribe();
   }
 
-  async getPosts(refresh: boolean): Promise<void> {
+  async getPosts(refresh: boolean): Promise<Post[]> {
     const _posts = await this.postService.getParsedPosts(
       this.$username(),
       refresh
     );
     this.$internalPosts.set(_posts);
+    return _posts;
   }
 
   goto(title: string) {

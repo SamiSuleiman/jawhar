@@ -27,7 +27,7 @@ export class GithubService {
     refresh = false
   ): Promise<Profile | undefined> {
     this.octokit = new Octokit({
-      auth: this.authService.$tokens()?.access,
+      auth: this.authService.getTokensFromLocalStorage()?.access,
     });
 
     const _profile = this.$profiles().find((p) => p.username === username);
@@ -95,6 +95,8 @@ export class GithubService {
 
       const gist = data?.find((g: any) => g.description === 'jawhar');
       const rawGistFileUrls: string[] = [];
+
+      if (!gist?.files) return [];
 
       Object.values(gist?.files).forEach((file: any) => {
         if (file && file.raw_url && file.language === 'Markdown')
