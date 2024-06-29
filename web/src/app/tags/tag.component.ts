@@ -53,6 +53,9 @@ export class TagComponent implements OnInit {
       [this.$tag()]
     );
 
+    console.log(this.$tag());
+    console.log(this.$username());
+
     this.$posts.set(_posts);
   }
 }

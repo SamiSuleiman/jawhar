@@ -2,20 +2,20 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
-  computed,
   inject,
   input,
   signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { debounceTime, skip } from 'rxjs';
+import { debounceTime, skip, startWith, tap } from 'rxjs';
 import { NavbarComponent } from '../ui/navbar.component';
 import { Post } from './post.model';
 import { PostService } from './post.service';
 import { SearchIconComponent } from '../ui/icons/search-icon.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   template: `
@@ -32,7 +32,7 @@ import { SearchIconComponent } from '../ui/icons/search-icon.component';
           type="text"
           class="grow"
           placeholder="Search"
-          [(value)]="$search"
+          [formControl]="searchCtrl"
         />
         <app-search-icon></app-search-icon>
       </label>
@@ -70,6 +70,7 @@ import { SearchIconComponent } from '../ui/icons/search-icon.component';
 export class PostListComponent implements OnInit {
   readonly $username = input.required<string>({ alias: 'username' });
 
+  private readonly destroyRef = inject(DestroyRef);
   private readonly postService = inject(PostService);
   private readonly router = inject(Router);
 
@@ -77,22 +78,29 @@ export class PostListComponent implements OnInit {
 
   readonly $isLoading = signal(false);
 
-  readonly $search = toSignal<string | null>(
-    new FormControl('').valueChanges.pipe(skip(1), debounceTime(400))
-  );
-
-  readonly $posts = computed(() => {
-    const _posts = this.$internalPosts();
-    const _search = this.$search();
-    return _search
-      ? _posts.filter((post) =>
-          post.title.toLowerCase().includes(_search.toLowerCase())
-        )
-      : _posts;
-  });
+  readonly searchCtrl = new FormControl('');
+  readonly $posts = signal<Post[]>([]);
 
   async ngOnInit(): Promise<void> {
     await this.getPosts(false);
+
+    this.searchCtrl.valueChanges
+      .pipe(
+        startWith(''),
+        debounceTime(200),
+        tap((search) => {
+          const _posts = this.$internalPosts();
+          this.$posts.set(
+            search
+              ? _posts.filter((post) =>
+                  post.title.toLowerCase().includes(search.toLowerCase())
+                )
+              : _posts
+          );
+        }),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe();
   }
 
   async getPosts(refresh: boolean): Promise<void> {

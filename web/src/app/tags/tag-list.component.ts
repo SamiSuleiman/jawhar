@@ -2,19 +2,19 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
-  computed,
   inject,
   input,
   signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { debounceTime, skip } from 'rxjs';
+import { debounceTime, startWith, tap } from 'rxjs';
+import { SearchIconComponent } from '../ui/icons/search-icon.component';
 import { NavbarComponent } from '../ui/navbar.component';
 import { TagService } from './tag.service';
-import { SearchIconComponent } from '../ui/icons/search-icon.component';
 
 @Component({
   template: `
@@ -25,7 +25,7 @@ import { SearchIconComponent } from '../ui/icons/search-icon.component';
         type="text"
         class="grow"
         placeholder="Search"
-        [(value)]="$search"
+        [formControl]="searchCtrl"
       />
       <app-search-icon></app-search-icon>
     </label>
@@ -60,6 +60,7 @@ import { SearchIconComponent } from '../ui/icons/search-icon.component';
 export class TagListComponent implements OnInit {
   readonly $username = input.required<string>({ alias: 'username' });
 
+  private readonly destroyRef = inject(DestroyRef);
   private readonly tagService = inject(TagService);
   private readonly router = inject(Router);
 
@@ -67,22 +68,29 @@ export class TagListComponent implements OnInit {
 
   readonly $isLoading = signal(false);
 
-  readonly $search = toSignal<string | null>(
-    new FormControl('').valueChanges.pipe(skip(1), debounceTime(400))
-  );
-
-  readonly $tags = computed(() => {
-    const _tags = this.$internalTags();
-    const _search = this.$search();
-    return _search
-      ? _tags.filter((post) =>
-          post.toLowerCase().includes(_search.toLowerCase())
-        )
-      : _tags;
-  });
+  readonly searchCtrl = new FormControl('');
+  readonly $tags = signal<string[]>([]);
 
   async ngOnInit(): Promise<void> {
     await this.getPosts(false);
+
+    this.searchCtrl.valueChanges
+      .pipe(
+        startWith(''),
+        debounceTime(200),
+        tap((search) => {
+          const _tags = this.$internalTags();
+          this.$tags.set(
+            search
+              ? _tags.filter((tag) =>
+                  tag.toLowerCase().includes(search.toLowerCase())
+                )
+              : _tags
+          );
+        }),
+        takeUntilDestroyed()
+      )
+      .subscribe();
   }
 
   async getPosts(refresh: boolean): Promise<void> {
