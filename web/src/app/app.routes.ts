@@ -19,49 +19,32 @@ export const routes: Routes = [
     canActivate: [isLoggedInGuard],
   },
   {
-    path: 'tags',
+    path: 'tags/:username',
     canActivate: [isLoggedInGuard],
-    children: [
-      {
-        path: ':username',
-        component: TagListComponent,
-        children: [
-          {
-            path: ':tag',
-            component: TagComponent,
-          },
-        ],
-      },
-    ],
+    component: TagListComponent,
   },
   {
-    path: 'posts',
+    path: 'tags/:username/:tag',
     canActivate: [isLoggedInGuard],
-    children: [
-      {
-        path: ':username',
-        component: PostListComponent,
-        children: [
-          {
-            path: ':title',
-            component: PostComponent,
-          },
-        ],
-      },
-    ],
+    component: TagComponent,
   },
   {
-    path: 'overview',
+    path: 'posts/:username',
     canActivate: [isLoggedInGuard],
-    children: [
-      {
-        path: ':username',
-        component: UserComponent,
-      },
-    ],
+    component: PostListComponent,
+  },
+  {
+    path: 'posts/:username/:title',
+    canActivate: [isLoggedInGuard],
+    component: PostComponent,
+  },
+  {
+    path: 'overview/:username',
+    canActivate: [isLoggedInGuard],
+    component: UserComponent,
   },
   {
     path: '**',
-    redirectTo: 'auth',
+    redirectTo: '',
   },
 ];
