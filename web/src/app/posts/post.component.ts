@@ -17,6 +17,7 @@ import { Post } from './post.model';
     <app-navbar> </app-navbar>
     <div class="p-2 overflow-x-scroll">
       <h1 class="font-bold">{{ $post()?.title }}</h1>
+      <img [src]="$post()?.thumbnail" alt="Thumbnail" />
       <div [innerHTML]="$post()?.content ?? ''"></div>
     </div>
   `,
