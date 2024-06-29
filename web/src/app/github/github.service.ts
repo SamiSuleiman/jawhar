@@ -16,7 +16,6 @@ export class GithubService {
   private readonly $profiles = signal<Profile[]>([]);
 
   private octokit: any;
-  readonly $err = signal<string | undefined>(undefined);
 
   async getProfile(
     username: string,
@@ -58,8 +57,6 @@ export class GithubService {
     if (username.length === 0) return;
 
     try {
-      this.$err.set(undefined);
-
       const { data } = (await this.octokit.rest.users.getByUsername({
         username,
       })) as any | undefined;
@@ -79,15 +76,21 @@ export class GithubService {
     } catch (e: any) {
       if (e.message.includes('Bad credentials')) {
         this.authService.$shouldLogin.set(true);
-        this.$err.set('You are not logged in');
-      } else this.$err.set('An error occurred. Please try again later.');
+        this.uiService.$alert.set({
+          message: 'You are not logged in',
+          type: 'error',
+        });
+      } else
+        this.uiService.$alert.set({
+          message: 'An error occurred. Please try again later.',
+          type: 'error',
+        });
       return;
     }
   }
 
   private async getGistFiles(username: string): Promise<string[] | undefined> {
     try {
-      this.$err.set(undefined);
       const { data } = await this.octokit.rest.gists.listForUser({
         username,
       });
@@ -102,13 +105,15 @@ export class GithubService {
           rawGistFileUrls.push(file.raw_url);
       });
 
-      this.$err.set(undefined);
       return await firstValueFrom(
         combineLatest(
           rawGistFileUrls.map((url) =>
             this.http.get(url, { responseType: 'text' }).pipe(
               catchError(() => {
-                this.$err.set("Couldn't fetch the gist files.");
+                this.uiService.$alert.set({
+                  message: "Couldn't fetch the gist files.",
+                  type: 'error',
+                });
                 return of(null);
               }),
               filter((file): file is string => !!file)
@@ -117,7 +122,11 @@ export class GithubService {
         ).pipe(filter((file) => !!file))
       );
     } catch (e: any) {
-      this.$err.set('An error occurred. Please try again later.');
+      this.uiService.$alert.set({
+        message: 'An error occurred. Please try again later.',
+        type: 'error',
+      });
+
       if (e.message.includes('Bad credentials'))
         this.authService.$shouldLogin.set(true);
       return;
