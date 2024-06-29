@@ -1,8 +1,8 @@
-import { Component, HostListener, OnInit, inject, signal } from '@angular/core';
-import { NavbarComponent } from '../ui/navbar.component';
+import { Component, HostListener, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { GithubService } from '../github/github.service';
 import { Router } from '@angular/router';
+import { GithubService } from '../github/github.service';
+import { NavbarComponent } from '../ui/navbar.component';
 
 @Component({
   template: `
@@ -44,7 +44,7 @@ import { Router } from '@angular/router';
               d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
             />
           </svg>
-          <span>error!</span>
+          <span>{{ ghService.$err() }}</span>
         </div>
         }
       </div>
@@ -55,7 +55,7 @@ import { Router } from '@angular/router';
   standalone: true,
   imports: [NavbarComponent, FormsModule],
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent {
   private readonly router = inject(Router);
   readonly ghService = inject(GithubService);
 
@@ -63,17 +63,11 @@ export class SearchComponent implements OnInit {
 
   name = '';
 
-  async ngOnInit(): Promise<void> {
-    await this.ghService.eject();
-  }
-
   @HostListener('window:keydown.enter', ['$event'])
   async onSubmit() {
     this.$isLoading.set(true);
-    const _res = await this.ghService.init(this.name);
+    const _res = await this.ghService.getProfile(this.name);
     this.$isLoading.set(false);
-
-    console.log(_res);
 
     if (_res) this.router.navigate(['/user']);
   }

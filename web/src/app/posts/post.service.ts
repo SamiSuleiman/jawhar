@@ -19,40 +19,43 @@ export class PostService {
         const language = hljs.getLanguage(lang) ? lang : 'plaintext';
         return hljs.highlight(code, { language }).value;
       },
-    }),
+    })
   ).use(customHeadingId(), {
     gfm: true,
     breaks: true,
   });
 
-  constructor() {
-    this.getParsedPosts();
+  private readonly parsedPosts = new Map<string, Post[]>();
+
+  async getParsedPosts(username: string, refresh = false): Promise<Post[]> {
+    const _userPosts = this.parsedPosts.get(username);
+
+    if (_userPosts && !refresh) return _userPosts;
+
+    if (!_userPosts || refresh) {
+      const _parsedPosts = await this.parsePosts(username, refresh);
+      this.parsedPosts.set(username, _parsedPosts);
+      return _parsedPosts;
+    }
+
+    return [];
   }
 
-  readonly $posts = signal<Post[]>([]);
-
-  async refreshPosts(refresh = false): Promise<Post[]> {
-    this.$posts.set([]);
-    return await this.getParsedPosts(refresh);
+  getPost(username: string, title: string): Post | undefined {
+    return this.parsedPosts.get(username)?.find((p) => p.title === title);
   }
 
-  getPost(title: string): Post | undefined {
-    return this.$posts().find((p) => p.title === title);
-  }
+  private async parsePosts(username: string, refresh = false): Promise<Post[]> {
+    const _profile = await this.ghService.getProfile(username, refresh);
 
-  private async getParsedPosts(refresh = false): Promise<Post[]> {
-    const _currPosts = this.$posts();
-    if (_currPosts.length) return _currPosts;
-
-    const _files = this.ghService.$gistFiles();
-    if (!_files || refresh)
-      await this.ghService.getGistFiles(this.ghService.$currUsername() ?? '');
+    if (!_profile) return [];
 
     const _parsed = (
-      await Promise.all(_files.map(async (p) => await this.parsePost(p)))
+      await Promise.all(
+        _profile.posts.map(async (p) => await this.parsePost(p))
+      )
     ).filter((p): p is Post => !!p);
 
-    this.$posts.set(_parsed);
     return _parsed;
   }
 

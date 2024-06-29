@@ -100,7 +100,7 @@ export class TagListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.ghService.$profile()) this.router.navigate(['search']);
+    if (!this.ghService.$loadedUser()) this.router.navigate(['search']);
     this._tags$.next(this.tagService.$tags());
   }
 }

@@ -23,14 +23,14 @@ import { NavbarComponent } from '../ui/navbar.component';
       </div>
     </app-navbar>
     <div>
-      @if (ghService.$profile(); as profile) {
+      @if (ghService.$loadedProfile(); as profile) {
       <div class="flex flex-col items-center">
         <div class="avatar">
           <div class="w-32 rounded">
             <img [src]="profile.avatarUrl" />
           </div>
         </div>
-        <p class="font-bold text-2xl">{{ profile.name }}</p>
+        <p class="font-bold text-2xl">{{ profile.displayName }}</p>
         <p>posts: {{ ghService.$gistFiles().length }}</p>
       </div>
       } @else {
@@ -49,6 +49,6 @@ export class UserComponent implements OnInit {
   readonly ghService = inject(GithubService);
 
   ngOnInit(): void {
-    if (!this.ghService.$profile()) this.router.navigate(['search']);
+    if (!this.ghService.$loadedProfile()) this.router.navigate(['search']);
   }
 }

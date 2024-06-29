@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
 import { AuthComponent } from './auth/auth.component';
+import { isLoggedInGuard } from './auth/is-logged-in.guard';
 import { PostListComponent } from './posts/post-list.component';
 import { PostComponent } from './posts/post.component';
 import { SearchComponent } from './search/search.component';
-import { UserComponent } from './user/user.component';
 import { TagListComponent } from './tags/tag-list.component';
 import { TagComponent } from './tags/tag.component';
-import { isLoggedInGuard } from './auth/is-logged-in.guard';
+import { UserComponent } from './user/user.component';
 
 export const routes: Routes = [
   {
@@ -21,35 +21,47 @@ export const routes: Routes = [
   {
     path: 'tags',
     canActivate: [isLoggedInGuard],
+    redirectTo: '',
     children: [
       {
-        path: '',
+        path: ':username',
         component: TagListComponent,
-      },
-      {
-        path: ':tag',
-        component: TagComponent,
+        children: [
+          {
+            path: ':tag',
+            component: TagComponent,
+          },
+        ],
       },
     ],
   },
   {
     path: 'posts',
     canActivate: [isLoggedInGuard],
+    redirectTo: '',
     children: [
       {
-        path: '',
+        path: ':username',
         component: PostListComponent,
-      },
-      {
-        path: ':title',
-        component: PostComponent,
+        children: [
+          {
+            path: ':title',
+            component: PostComponent,
+          },
+        ],
       },
     ],
   },
   {
-    path: 'user',
+    path: 'overview',
     canActivate: [isLoggedInGuard],
-    component: UserComponent,
+    redirectTo: '',
+    children: [
+      {
+        path: ':username',
+        component: UserComponent,
+      },
+    ],
   },
   {
     path: '**',

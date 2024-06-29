@@ -9,7 +9,7 @@ export class TagService {
   private readonly postService = inject(PostService);
 
   readonly $tags = computed(() => {
-    const _posts = this.postService.$posts();
+    const _posts = this.postService.$parsedPosts();
     const _tags = new Set<string>();
     _posts.forEach((p) => p.tags.forEach((t) => _tags.add(t)));
     console.log('tags', Array.from(_tags));
@@ -17,6 +17,6 @@ export class TagService {
   });
 
   getTagPosts(tag: string): Post[] {
-    return this.postService.$posts().filter((p) => p.tags.includes(tag));
+    return this.postService.$parsedPosts().filter((p) => p.tags.includes(tag));
   }
 }

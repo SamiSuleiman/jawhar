@@ -3,7 +3,9 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  computed,
   inject,
+  input,
   signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -64,7 +66,7 @@ import { PostService } from './post.service';
       class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center m-2"
     >
       <ul class="flex flex-col gap-2">
-        @for (post of _posts$ | async; track post) {
+        @for (post of posts$ | async; track post) {
         <li class="hover:underline">
           <a [routerLink]="['/posts', post.title]">
             - <span>{{ post.title }}</span>
@@ -82,12 +84,15 @@ import { PostService } from './post.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PostListComponent implements OnInit {
+  readonly $username = input.required<string>({ alias: 'username' });
+
   private readonly router = inject(Router);
   private readonly postService = inject(PostService);
-  readonly ghService = inject(GithubService);
 
   readonly $isLoading = signal(false);
-  readonly _posts$ = new BehaviorSubject<Post[]>([]);
+  readonly $posts = computed(() => {
+    const _username = this.$username();
+  });
 
   readonly searchVal = new FormControl('');
 
@@ -97,10 +102,10 @@ export class PostListComponent implements OnInit {
         skip(1),
         debounceTime(400),
         tap((val) => {
-          const _originalPosts = this.postService.$posts();
-          if (!val) this._posts$.next(_originalPosts);
+          const _originalPosts = this.postService.$parsedPosts();
+          if (!val) this.$posts.next(_originalPosts);
           else
-            this._posts$.next(
+            this.$posts.next(
               _originalPosts.filter((post) =>
                 post.title.toLowerCase().includes(val.toLowerCase())
               )
@@ -111,16 +116,10 @@ export class PostListComponent implements OnInit {
       .subscribe();
   }
 
-  async ngOnInit(): Promise<void> {
-    // ! wrong thing?
-    if (!this.ghService.$profile()) this.router.navigate(['/']);
-    else this._posts$.next(await this.postService.refreshPosts());
-  }
-
   async refreshPosts(): Promise<void> {
     this.searchVal.setValue('');
     this.$isLoading.set(true);
-    this._posts$.next(await this.postService.refreshPosts(true));
+    this.$posts.next(await this.postService.refreshPosts(true));
     this.$isLoading.set(false);
   }
 }

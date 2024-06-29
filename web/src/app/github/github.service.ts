@@ -16,37 +16,46 @@ import { AuthService } from '../auth/auth.service';
   providedIn: 'root',
 })
 export class GithubService {
+  private octokit: any;
   private readonly authService = inject(AuthService);
   private readonly http = inject(HttpClient);
-  private octokit: any;
-  readonly $gistFiles = signal<string[]>([]);
-  readonly $profile = signal<Profile | undefined>(undefined);
+  private readonly $profiles = signal<Profile[]>([]);
   readonly $err = signal<string | undefined>(undefined);
-  readonly $currUsername = signal<string | undefined>(undefined);
 
-  async init(username: string): Promise<boolean> {
-    this.$currUsername.set(username);
+  async getProfile(
+    username: string,
+    refresh = false
+  ): Promise<Profile | undefined> {
     this.octokit = new Octokit({
       auth: this.authService.$tokens()?.access,
     });
 
-    const _files = this.$gistFiles();
-    const _profile = this.$profile();
+    const _profile = this.$profiles().find((p) => p.username === username);
 
-    if (_files.length === 0) await this.getGistFiles(username);
-    if (!_profile) await this.getProfile(username);
+    if (_profile && !refresh) return _profile;
 
-    if (this.$gistFiles() && this.$profile()) return true;
-    return false;
+    let _fetchedProfile: Profile | undefined;
+
+    if (!_profile) {
+      _fetchedProfile = await this.fetchProfile(username);
+      if (_fetchedProfile)
+        this.$profiles.update((o) => [...o, _fetchedProfile as Profile]);
+    }
+
+    if (_profile && refresh) {
+      _fetchedProfile = await this.fetchProfile(username);
+      if (_fetchedProfile)
+        this.$profiles.update((o) =>
+          o.map((p) =>
+            p.username === username ? (_fetchedProfile as Profile) : p
+          )
+        );
+    }
+
+    return _fetchedProfile;
   }
 
-  async eject(): Promise<void> {
-    this.$gistFiles.set([]);
-    this.$profile.set(undefined);
-    this.$currUsername.set(undefined);
-  }
-
-  private async getProfile(username: string): Promise<void> {
+  private async fetchProfile(username: string): Promise<Profile | undefined> {
     if (username.length === 0) return;
 
     try {
@@ -58,18 +67,26 @@ export class GithubService {
 
       if (!data) return;
 
-      this.$profile.set({
-        name: data.name ?? data.login,
+      const _files = await this.getGistFiles(username);
+
+      if (!_files) return;
+
+      return {
+        username: data.login,
+        displayName: data.name ?? data.login,
         avatarUrl: data.avatar_url,
-      } as Profile);
+        posts: _files,
+      } as Profile;
     } catch (e: any) {
-      e.message.includes('Bad credentials')
-        ? this.$err.set('You are not logged in :(')
-        : this.$err.set('An error occurred. Please try again later.');
+      if (e.message.includes('Bad credentials')) {
+        this.authService.$shouldLogin.set(true);
+        this.$err.set('You are not logged in');
+      } else this.$err.set('An error occurred. Please try again later.');
+      return;
     }
   }
 
-  async getGistFiles(username: string): Promise<void> {
+  private async getGistFiles(username: string): Promise<string[] | undefined> {
     try {
       this.$err.set(undefined);
       const { data } = await this.octokit.rest.gists.listForUser({
@@ -85,7 +102,7 @@ export class GithubService {
       });
 
       this.$err.set(undefined);
-      await firstValueFrom(
+      return await firstValueFrom(
         combineLatest(
           rawGistFileUrls.map((url) =>
             this.http.get(url, { responseType: 'text' }).pipe(
@@ -96,14 +113,13 @@ export class GithubService {
               filter((file): file is string => !!file)
             )
           )
-        ).pipe(
-          filter((file) => !!file),
-          tap((files) => this.$gistFiles.set(files))
-        )
+        ).pipe(filter((file) => !!file))
       );
     } catch (e: any) {
       this.$err.set('An error occurred. Please try again later.');
-      if (e.message.includes('Bad credentials')) this.authService.logout();
+      if (e.message.includes('Bad credentials'))
+        this.authService.$shouldLogin.set(true);
+      return;
     }
   }
 }

@@ -1,4 +1,6 @@
 export interface Profile {
-  name: string;
+  username: string;
+  displayName: string;
   avatarUrl: string;
+  posts: string[];
 }
