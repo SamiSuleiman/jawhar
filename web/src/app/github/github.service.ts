@@ -4,15 +4,18 @@ import { Octokit } from 'octokit';
 import { catchError, combineLatest, filter, firstValueFrom, of } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { Profile } from './github.model';
+import { UiService } from '../ui/ui.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GithubService {
-  private octokit: any;
+  private readonly uiService = inject(UiService);
   private readonly authService = inject(AuthService);
   private readonly http = inject(HttpClient);
   private readonly $profiles = signal<Profile[]>([]);
+
+  private octokit: any;
   readonly $err = signal<string | undefined>(undefined);
 
   async getProfile(
@@ -29,6 +32,7 @@ export class GithubService {
 
     let _fetchedProfile: Profile | undefined;
 
+    this.uiService.$isLoading.set(true);
     if (!_profile) {
       _fetchedProfile = await this.fetchProfile(username);
       if (_fetchedProfile)
@@ -44,6 +48,8 @@ export class GithubService {
           )
         );
     }
+
+    this.uiService.$isLoading.set(false);
 
     return _fetchedProfile;
   }
