@@ -15,21 +15,11 @@ import { debounceTime, skip } from 'rxjs';
 import { NavbarComponent } from '../ui/navbar.component';
 import { Post } from './post.model';
 import { PostService } from './post.service';
+import { SearchIconComponent } from '../ui/icons/search-icon.component';
 
 @Component({
   template: `
-    <app-navbar>
-      <div class="flex items-center lg:gap-6 mb-4">
-        <div class="flex items-center">
-          <li><a [routerLink]="['/user']">/user</a></li>
-          <li><a [routerLink]="['/posts']">\\posts</a></li>
-          <li><a [routerLink]="['/tags']">/tags</a></li>
-        </div>
-        <li class="underline decoration-wavy font-bold">
-          <a [routerLink]="['/']">exit</a>
-        </li>
-      </div>
-    </app-navbar>
+    <app-navbar> </app-navbar>
 
     @if ($isLoading()) {
     <button class="btn btn-square">
@@ -44,18 +34,7 @@ import { PostService } from './post.service';
           placeholder="Search"
           [(value)]="$search"
         />
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 16 16"
-          fill="currentColor"
-          class="w-4 h-4 opacity-70"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-            clip-rule="evenodd"
-          />
-        </svg>
+        <app-search-icon></app-search-icon>
       </label>
       <button class="btn" (click)="getPosts(true)">Reload</button>
     </div>
@@ -79,7 +58,13 @@ import { PostService } from './post.service';
   `,
   selector: 'app-post-list',
   standalone: true,
-  imports: [NavbarComponent, RouterLink, ReactiveFormsModule, AsyncPipe],
+  imports: [
+    NavbarComponent,
+    RouterLink,
+    ReactiveFormsModule,
+    AsyncPipe,
+    SearchIconComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PostListComponent implements OnInit {

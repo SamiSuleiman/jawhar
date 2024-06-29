@@ -15,18 +15,7 @@ import { PostService } from '../posts/post.service';
 
 @Component({
   template: `
-    <app-navbar>
-      <div class="flex items-center lg:gap-6 mb-4">
-        <div class="flex items-center">
-          <li><a [routerLink]="['/user']">/user</a></li>
-          <li><a [routerLink]="['/posts']">/posts</a></li>
-          <li><a [routerLink]="['/tags']">\\tags</a></li>
-        </div>
-        <li class="underline decoration-wavy font-bold">
-          <a [routerLink]="['/']">exit</a>
-        </li>
-      </div>
-    </app-navbar>
+    <app-navbar> </app-navbar>
 
     <div
       class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center"
