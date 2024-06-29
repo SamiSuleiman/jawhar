@@ -69,6 +69,6 @@ export class SearchComponent {
     const _res = await this.ghService.getProfile(this.name);
     this.$isLoading.set(false);
 
-    if (_res) this.router.navigate(['/user']);
+    if (_res) this.router.navigate([`/overview/${_res.username}`]);
   }
 }

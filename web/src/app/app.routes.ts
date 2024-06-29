@@ -21,7 +21,6 @@ export const routes: Routes = [
   {
     path: 'tags',
     canActivate: [isLoggedInGuard],
-    redirectTo: '',
     children: [
       {
         path: ':username',
@@ -38,7 +37,6 @@ export const routes: Routes = [
   {
     path: 'posts',
     canActivate: [isLoggedInGuard],
-    redirectTo: '',
     children: [
       {
         path: ':username',
@@ -55,7 +53,6 @@ export const routes: Routes = [
   {
     path: 'overview',
     canActivate: [isLoggedInGuard],
-    redirectTo: '',
     children: [
       {
         path: ':username',
