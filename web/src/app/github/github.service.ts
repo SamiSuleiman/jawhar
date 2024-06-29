@@ -29,24 +29,18 @@ export class GithubService {
 
     if (_profile && !refresh) return _profile;
 
-    let _fetchedProfile: Profile | undefined;
-
     this.uiService.$isLoading.set(true);
-    if (!_profile) {
-      _fetchedProfile = await this.fetchProfile(username);
-      if (_fetchedProfile)
-        this.$profiles.update((o) => [...o, _fetchedProfile as Profile]);
-    }
+    const _fetchedProfile = await this.fetchProfile(username);
 
-    if (_profile && refresh) {
-      _fetchedProfile = await this.fetchProfile(username);
-      if (_fetchedProfile)
-        this.$profiles.update((o) =>
-          o.map((p) =>
-            p.username === username ? (_fetchedProfile as Profile) : p
-          )
-        );
-    }
+    if (!_profile && _fetchedProfile)
+      this.$profiles.update((o) => [...o, _fetchedProfile as Profile]);
+
+    if (_profile && refresh && _fetchedProfile)
+      this.$profiles.update((o) =>
+        o.map((p) =>
+          p.username === username ? (_fetchedProfile as Profile) : p
+        )
+      );
 
     this.uiService.$isLoading.set(false);
 
