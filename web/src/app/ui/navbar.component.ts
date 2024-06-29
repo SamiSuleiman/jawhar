@@ -14,6 +14,7 @@ import { UiService } from './ui.service';
   template: `
     <div class="navbar bg-base-100">
       <ul class="menu menu-horizontal px-1 flex w-full justify-between">
+        <li (click)="goto('')" class="font-extrabold text-2xl"><a>ج</a></li>
         <div class="flex">
           <li
             (click)="goto('overview')"
