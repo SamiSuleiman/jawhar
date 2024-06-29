@@ -19,13 +19,15 @@ import { UiService } from './ui.service';
             (click)="goto('overview')"
             [ngClass]="[isDisabled('overview') ? 'hidden' : '']"
           >
-            <a>{{ $route() === 'overview' ? 'Overview/' : '/Overview' }}</a>
+            <a class="no-underline">{{
+              $route() === 'overview' ? 'Overview/' : '/Overview'
+            }}</a>
           </li>
           <li
             (click)="goto('posts')"
             [ngClass]="[isDisabled('posts') ? 'hidden' : '']"
           >
-            <a>
+            <a class="no-underline">
               {{ $route() === 'posts' ? 'Posts/' : '/Posts' }}
             </a>
           </li>
@@ -33,7 +35,7 @@ import { UiService } from './ui.service';
             (click)="goto('tags')"
             [ngClass]="[isDisabled('tags') ? 'hidden' : '']"
           >
-            <a>
+            <a class="no-underline">
               {{ $route() === 'tags' ? 'Tags/' : '/Tags' }}
             </a>
           </li>
@@ -48,7 +50,6 @@ import { UiService } from './ui.service';
     <progress class="progress w-full"></progress>
     }
   `,
-  styles: ``,
   selector: 'app-navbar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,

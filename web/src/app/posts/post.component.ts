@@ -17,7 +17,6 @@ import { PostService } from './post.service';
       <div [innerHTML]="$post()?.content ?? ''"></div>
     </div>
   `,
-  styles: ``,
   selector: 'app-post',
   standalone: true,
   imports: [NavbarComponent, RouterLink],
