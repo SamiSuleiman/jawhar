@@ -8,6 +8,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
+import { UiService } from './ui.service';
 
 @Component({
   template: `
@@ -42,6 +43,10 @@ import { map } from 'rxjs';
         </div>
       </ul>
     </div>
+    @if(uiService.$isLoading()){
+
+    <progress class="progress w-full"></progress>
+    }
   `,
   styles: ``,
   selector: 'app-navbar',
@@ -52,6 +57,8 @@ import { map } from 'rxjs';
 export class NavbarComponent {
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  readonly uiService = inject(UiService);
+
   private readonly $userInView = toSignal(
     this.route.params.pipe(map((p) => p['username']))
   );
