@@ -3,10 +3,13 @@ import {
   Component,
   OnInit,
   inject,
+  input,
+  signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { GithubService } from '../github/github.service';
 import { NavbarComponent } from '../ui/navbar.component';
+import { Profile } from '../github/github.model';
 
 @Component({
   template: `
@@ -23,7 +26,7 @@ import { NavbarComponent } from '../ui/navbar.component';
       </div>
     </app-navbar>
     <div>
-      @if (ghService.$loadedProfile(); as profile) {
+      @if ($profile(); as profile) {
       <div class="flex flex-col items-center">
         <div class="avatar">
           <div class="w-32 rounded">
@@ -31,10 +34,8 @@ import { NavbarComponent } from '../ui/navbar.component';
           </div>
         </div>
         <p class="font-bold text-2xl">{{ profile.displayName }}</p>
-        <p>posts: {{ ghService.$gistFiles().length }}</p>
+        <p>posts: {{ profile.posts.length }}</p>
       </div>
-      } @else {
-      <p>no profile.</p>
       }
     </div>
   `,
@@ -45,10 +46,16 @@ import { NavbarComponent } from '../ui/navbar.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent implements OnInit {
-  private readonly router = inject(Router);
-  readonly ghService = inject(GithubService);
+  readonly $username = input.required<string>({ alias: 'username' });
 
-  ngOnInit(): void {
-    if (!this.ghService.$loadedProfile()) this.router.navigate(['search']);
+  private readonly router = inject(Router);
+  private readonly ghService = inject(GithubService);
+
+  readonly $profile = signal<Profile | undefined>(undefined);
+
+  async ngOnInit(): Promise<void> {
+    const _profile = await this.ghService.getProfile(this.$username());
+    if (!_profile) this.router.navigate(['/']);
+    this.$profile.set(_profile);
   }
 }

@@ -8,11 +8,10 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { BehaviorSubject, debounceTime, skip, tap } from 'rxjs';
-import { GithubService } from '../github/github.service';
+import { debounceTime, skip } from 'rxjs';
 import { NavbarComponent } from '../ui/navbar.component';
 import { Post } from './post.model';
 import { PostService } from './post.service';
@@ -43,7 +42,7 @@ import { PostService } from './post.service';
           type="text"
           class="grow"
           placeholder="Search"
-          [formControl]="searchVal"
+          [(value)]="$search"
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -66,7 +65,7 @@ import { PostService } from './post.service';
       class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center m-2"
     >
       <ul class="flex flex-col gap-2">
-        @for (post of posts$ | async; track post) {
+        @for (post of $posts(); track post) {
         <li class="hover:underline">
           <a [routerLink]="['/posts', post.title]">
             - <span>{{ post.title }}</span>
@@ -89,37 +88,31 @@ export class PostListComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly postService = inject(PostService);
 
+  private readonly $internalPosts = signal<Post[]>([]);
+
   readonly $isLoading = signal(false);
+
+  readonly $search = toSignal<string | null>(
+    new FormControl('').valueChanges.pipe(skip(1), debounceTime(400))
+  );
+
   readonly $posts = computed(() => {
-    const _username = this.$username();
+    const posts = this.$internalPosts();
+    const search = this.$search();
+    return search
+      ? posts.filter((post) =>
+          post.title.toLowerCase().includes(search.toLowerCase())
+        )
+      : posts;
   });
 
-  readonly searchVal = new FormControl('');
-
-  constructor() {
-    this.searchVal.valueChanges
-      .pipe(
-        skip(1),
-        debounceTime(400),
-        tap((val) => {
-          const _originalPosts = this.postService.$parsedPosts();
-          if (!val) this.$posts.next(_originalPosts);
-          else
-            this.$posts.next(
-              _originalPosts.filter((post) =>
-                post.title.toLowerCase().includes(val.toLowerCase())
-              )
-            );
-        }),
-        takeUntilDestroyed()
-      )
-      .subscribe();
+  async ngOnInit(): Promise<void> {
+    const _posts = await this.postService.getParsedPosts(this.$username());
+    this.$internalPosts.set(_posts);
   }
 
   async refreshPosts(): Promise<void> {
-    this.searchVal.setValue('');
-    this.$isLoading.set(true);
-    this.$posts.next(await this.postService.refreshPosts(true));
-    this.$isLoading.set(false);
+    const _posts = await this.postService.getParsedPosts(this.$username());
+    this.$internalPosts.set(_posts);
   }
 }
