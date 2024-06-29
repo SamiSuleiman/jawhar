@@ -5,7 +5,7 @@ import {
   inject,
   input,
 } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../ui/navbar.component';
 import { PostService } from './post.service';
 
@@ -35,14 +35,12 @@ import { PostService } from './post.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PostComponent {
+  readonly $username = input.required<string>({ alias: 'username' });
+  readonly $title = input.required<string>({ alias: 'title' });
+
   private readonly postService = inject(PostService);
-  private readonly router = inject(Router);
 
-  $title = input.required<string>({ alias: 'title' });
-
-  $post = computed(() => {
-    const _post = this.postService.getPost(this.$title());
-    if (!_post) this.router.navigate(['/posts']);
-    return _post;
-  });
+  $post = computed(() =>
+    this.postService.getPost(this.$username(), this.$title())
+  );
 }

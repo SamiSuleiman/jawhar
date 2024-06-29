@@ -57,7 +57,7 @@ import { PostService } from './post.service';
           />
         </svg>
       </label>
-      <button class="btn" (click)="refreshPosts()">Reload</button>
+      <button class="btn" (click)="getPosts(true)">Reload</button>
     </div>
     }
 
@@ -67,7 +67,7 @@ import { PostService } from './post.service';
       <ul class="flex flex-col gap-2">
         @for (post of $posts(); track post) {
         <li class="hover:underline">
-          <a [routerLink]="['/posts', post.title]">
+          <a (click)="goto(post.title)">
             - <span>{{ post.title }}</span>
           </a>
         </li>
@@ -85,8 +85,8 @@ import { PostService } from './post.service';
 export class PostListComponent implements OnInit {
   readonly $username = input.required<string>({ alias: 'username' });
 
-  private readonly router = inject(Router);
   private readonly postService = inject(PostService);
+  private readonly router = inject(Router);
 
   private readonly $internalPosts = signal<Post[]>([]);
 
@@ -97,22 +97,28 @@ export class PostListComponent implements OnInit {
   );
 
   readonly $posts = computed(() => {
-    const posts = this.$internalPosts();
-    const search = this.$search();
-    return search
-      ? posts.filter((post) =>
-          post.title.toLowerCase().includes(search.toLowerCase())
+    const _posts = this.$internalPosts();
+    const _search = this.$search();
+    return _search
+      ? _posts.filter((post) =>
+          post.title.toLowerCase().includes(_search.toLowerCase())
         )
-      : posts;
+      : _posts;
   });
 
   async ngOnInit(): Promise<void> {
-    const _posts = await this.postService.getParsedPosts(this.$username());
+    await this.getPosts(false);
+  }
+
+  async getPosts(refresh: boolean): Promise<void> {
+    const _posts = await this.postService.getParsedPosts(
+      this.$username(),
+      refresh
+    );
     this.$internalPosts.set(_posts);
   }
 
-  async refreshPosts(): Promise<void> {
-    const _posts = await this.postService.getParsedPosts(this.$username());
-    this.$internalPosts.set(_posts);
+  goto(title: string) {
+    this.router.navigate([`/posts/${this.$username()}/${title}`]);
   }
 }

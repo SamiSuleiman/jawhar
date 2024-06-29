@@ -1,8 +1,8 @@
-import { Injectable, inject, signal } from '@angular/core';
-import { GithubService } from '../github/github.service';
+import { Injectable, inject } from '@angular/core';
+import hljs from 'highlight.js';
 import { Marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
-import hljs from 'highlight.js';
+import { GithubService } from '../github/github.service';
 //@ts-ignore
 import customHeadingId from 'marked-custom-heading-id';
 import { Post } from './post.model';
@@ -27,15 +27,24 @@ export class PostService {
 
   private readonly parsedPosts = new Map<string, Post[]>();
 
-  async getParsedPosts(username: string, refresh = false): Promise<Post[]> {
+  async getParsedPosts(
+    username: string,
+    refresh = false,
+    tags?: string[]
+  ): Promise<Post[]> {
     const _userPosts = this.parsedPosts.get(username);
 
-    if (_userPosts && !refresh) return _userPosts;
+    if (_userPosts && !refresh)
+      return tags
+        ? _userPosts.filter((p) => p.tags.some((t) => tags.includes(t)))
+        : _userPosts;
 
     if (!_userPosts || refresh) {
       const _parsedPosts = await this.parsePosts(username, refresh);
       this.parsedPosts.set(username, _parsedPosts);
-      return _parsedPosts;
+      return tags
+        ? _parsedPosts.filter((p) => p.tags.some((t) => tags.includes(t)))
+        : _parsedPosts;
     }
 
     return [];

@@ -1,6 +1,5 @@
-import { Injectable, computed, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { PostService } from '../posts/post.service';
-import { Post } from '../posts/post.model';
 
 @Injectable({
   providedIn: 'root',
@@ -8,15 +7,23 @@ import { Post } from '../posts/post.model';
 export class TagService {
   private readonly postService = inject(PostService);
 
-  readonly $tags = computed(() => {
-    const _posts = this.postService.$parsedPosts();
-    const _tags = new Set<string>();
-    _posts.forEach((p) => p.tags.forEach((t) => _tags.add(t)));
-    console.log('tags', Array.from(_tags));
-    return Array.from(_tags);
-  });
+  private readonly tags = new Map<string, string[]>();
 
-  getTagPosts(tag: string): Post[] {
-    return this.postService.$parsedPosts().filter((p) => p.tags.includes(tag));
+  async getUserTags(username: string, refresh = false): Promise<string[]> {
+    const _tags = this.tags.get(username);
+
+    if (_tags && !refresh) return _tags;
+
+    const _t = new Set<string>();
+
+    const _userPosts = await this.postService.getParsedPosts(username, refresh);
+
+    _userPosts.forEach((post) => {
+      post.tags.forEach((t) => _t.add(t));
+    });
+
+    this.tags.set(username, Array.from(_t));
+
+    return Array.from(_t);
   }
 }

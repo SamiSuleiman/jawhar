@@ -3,13 +3,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  computed,
   inject,
+  input,
+  signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { BehaviorSubject, debounceTime, skip, tap } from 'rxjs';
-import { GithubService } from '../github/github.service';
+import { debounceTime, skip } from 'rxjs';
 import { NavbarComponent } from '../ui/navbar.component';
 import { TagService } from './tag.service';
 
@@ -33,7 +35,7 @@ import { TagService } from './tag.service';
         type="text"
         class="grow"
         placeholder="Search"
-        [formControl]="searchVal"
+        [(value)]="$search"
       />
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -52,9 +54,9 @@ import { TagService } from './tag.service';
       class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center m-2"
     >
       <ul class="flex flex-col gap-2">
-        @for (tag of _tags$ | async; track tag) {
+        @for (tag of $tags(); track tag) {
         <li class="hover:underline">
-          <a [routerLink]="['/tags', tag]">
+          <a (click)="goto(tag)">
             - <span>{{ tag }}</span>
           </a>
         </li>
@@ -71,36 +73,39 @@ import { TagService } from './tag.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagListComponent implements OnInit {
-  private readonly ghService = inject(GithubService);
+  readonly $username = input.required<string>({ alias: 'username' });
+
+  private readonly tagService = inject(TagService);
   private readonly router = inject(Router);
-  readonly tagService = inject(TagService);
 
-  readonly _tags$ = new BehaviorSubject<string[]>([]);
+  private readonly $internalTags = signal<string[]>([]);
 
-  readonly searchVal = new FormControl('');
+  readonly $isLoading = signal(false);
 
-  constructor() {
-    this.searchVal.valueChanges
-      .pipe(
-        skip(1),
-        debounceTime(400),
-        tap((val) => {
-          const _originalTags = this.tagService.$tags();
-          if (!val) this._tags$.next(_originalTags);
-          else
-            this._tags$.next(
-              _originalTags.filter((tag) =>
-                tag.toLowerCase().includes(val.toLowerCase())
-              )
-            );
-        }),
-        takeUntilDestroyed()
-      )
-      .subscribe();
+  readonly $search = toSignal<string | null>(
+    new FormControl('').valueChanges.pipe(skip(1), debounceTime(400))
+  );
+
+  readonly $tags = computed(() => {
+    const _tags = this.$internalTags();
+    const _search = this.$search();
+    return _search
+      ? _tags.filter((post) =>
+          post.toLowerCase().includes(_search.toLowerCase())
+        )
+      : _tags;
+  });
+
+  async ngOnInit(): Promise<void> {
+    await this.getPosts(false);
   }
 
-  ngOnInit(): void {
-    if (!this.ghService.$loadedUser()) this.router.navigate(['search']);
-    this._tags$.next(this.tagService.$tags());
+  async getPosts(refresh: boolean): Promise<void> {
+    const _tags = await this.tagService.getUserTags(this.$username(), refresh);
+    this.$internalTags.set(_tags);
+  }
+
+  goto(tag: string) {
+    this.router.navigate([`/tags/${this.$username()}/${tag}`]);
   }
 }
