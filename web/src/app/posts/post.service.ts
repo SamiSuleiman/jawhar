@@ -50,8 +50,10 @@ export class PostService {
     return [];
   }
 
-  getPost(username: string, title: string): Post | undefined {
-    return this.parsedPosts.get(username)?.find((p) => p.title === title);
+  async getPost(username: string, title: string): Promise<Post | undefined> {
+    let _userPosts = this.parsedPosts.get(username);
+    if (!_userPosts) _userPosts = await this.getParsedPosts(username);
+    return _userPosts.find((p) => p.title === title);
   }
 
   private async parsePosts(username: string, refresh = false): Promise<Post[]> {

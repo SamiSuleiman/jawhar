@@ -7,7 +7,7 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../ui/navbar.component';
 import { TagService } from './tag.service';
 import { Post } from '../posts/post.model';
@@ -23,7 +23,7 @@ import { PostService } from '../posts/post.service';
       <ul class="flex flex-col gap-2">
         @for (post of $posts(); track post) {
         <li class="hover:underline">
-          <a [routerLink]="['/posts', post.title]">
+          <a (click)="goto(post.title)">
             - <span>{{ post.title }}</span>
           </a>
         </li>
@@ -41,6 +41,7 @@ export class TagComponent implements OnInit {
   readonly $username = input.required<string>({ alias: 'username' });
   readonly $tag = input.required<string>({ alias: 'tag' });
 
+  private readonly router = inject(Router);
   readonly tagService = inject(TagService);
   readonly postService = inject(PostService);
 
@@ -54,5 +55,9 @@ export class TagComponent implements OnInit {
     );
 
     this.$posts.set(_posts);
+  }
+
+  goto(title: string) {
+    this.router.navigate([`/posts/${this.$username()}/${title}`]);
   }
 }

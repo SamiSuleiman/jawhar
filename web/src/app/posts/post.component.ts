@@ -1,13 +1,16 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  OnInit,
   computed,
   inject,
   input,
+  signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { NavbarComponent } from '../ui/navbar.component';
 import { PostService } from './post.service';
+import { Post } from './post.model';
 
 @Component({
   template: `
@@ -22,13 +25,19 @@ import { PostService } from './post.service';
   imports: [NavbarComponent, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PostComponent {
+export class PostComponent implements OnInit {
   readonly $username = input.required<string>({ alias: 'username' });
   readonly $title = input.required<string>({ alias: 'title' });
 
   private readonly postService = inject(PostService);
 
-  $post = computed(() =>
-    this.postService.getPost(this.$username(), this.$title())
-  );
+  readonly $post = signal<Post | undefined>(undefined);
+
+  async ngOnInit(): Promise<void> {
+    const _post = await this.postService.getPost(
+      this.$username(),
+      this.$title()
+    );
+    this.$post.set(_post);
+  }
 }
