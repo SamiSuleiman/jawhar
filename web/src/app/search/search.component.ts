@@ -9,16 +9,11 @@ import { NavbarComponent } from '../ui/navbar.component';
     <app-navbar> </app-navbar>
     <div class="p-1 mt-4 flex justify-start items-center">
       <div class="flex flex-col gap-2 w-full">
-        <div class="flex">
+        <div class="flex flex-wrap sm:flex-nowrap">
           <label
             class="input input-bordered flex items-center gap-2 w-full rounded-none"
           >
-            <input
-              [(ngModel)]="name"
-              type="text"
-              class="grow"
-              placeholder="search"
-            />
+            <input [(ngModel)]="name" type="text" placeholder="search" />
           </label>
           @if ($isLoading()) {
           <button class="btn btn-square">

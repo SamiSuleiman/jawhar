@@ -21,11 +21,6 @@ import { PostService } from './post.service';
   template: `
     <app-navbar> </app-navbar>
 
-    @if ($isLoading()) {
-    <button class="btn btn-square">
-      <span class="loading loading-spinner"></span>
-    </button>
-    } @else {
     <div class="flex gap-2">
       <label class="input input-bordered flex items-center gap-2 flex-grow">
         <input
@@ -36,9 +31,7 @@ import { PostService } from './post.service';
         />
         <app-search-icon></app-search-icon>
       </label>
-      <button class="btn" (click)="getPosts(true)">Reload</button>
     </div>
-    }
 
     <div
       class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center m-2"
@@ -75,8 +68,6 @@ export class PostListComponent implements OnInit {
   private readonly router = inject(Router);
 
   private readonly $internalPosts = signal<Post[]>([]);
-
-  readonly $isLoading = signal(false);
 
   readonly searchCtrl = new FormControl('');
   readonly $posts = signal<Post[]>([]);

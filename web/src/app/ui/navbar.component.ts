@@ -1,3 +1,4 @@
+import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,15 +14,24 @@ import { map } from 'rxjs';
     <div class="navbar bg-base-100">
       <ul class="menu menu-horizontal px-1 flex w-full justify-between">
         <div class="flex">
-          <li (click)="goto('overview')">
+          <li
+            (click)="goto('overview')"
+            [ngClass]="[isDisabled('overview') ? 'hidden' : '']"
+          >
             <a>{{ $route() === 'overview' ? 'Overview/' : '/Overview' }}</a>
           </li>
-          <li (click)="goto('posts')">
+          <li
+            (click)="goto('posts')"
+            [ngClass]="[isDisabled('posts') ? 'hidden' : '']"
+          >
             <a>
               {{ $route() === 'posts' ? 'Posts/' : '/Posts' }}
             </a>
           </li>
-          <li (click)="goto('tags')">
+          <li
+            (click)="goto('tags')"
+            [ngClass]="[isDisabled('tags') ? 'hidden' : '']"
+          >
             <a>
               {{ $route() === 'tags' ? 'Tags/' : '/Tags' }}
             </a>
@@ -37,6 +47,7 @@ import { map } from 'rxjs';
   selector: 'app-navbar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgClass],
 })
 export class NavbarComponent {
   private readonly router = inject(Router);
@@ -52,12 +63,17 @@ export class NavbarComponent {
     this.$route.set(_currRoute);
   }
 
-  goto(route: string) {
+  goto(route: string): void {
     if (route === '') {
       this.router.navigate(['/']);
     } else {
       if (!this.$userInView()) return;
       this.router.navigate([`/${route}/${this.$userInView()}`]);
     }
+  }
+
+  isDisabled(route: string): boolean {
+    if (route === '') return false;
+    return !this.$userInView();
   }
 }

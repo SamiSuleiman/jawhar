@@ -1,16 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Octokit } from 'octokit';
-import {
-  catchError,
-  combineLatest,
-  filter,
-  firstValueFrom,
-  of,
-  tap,
-} from 'rxjs';
-import { Profile } from './github.model';
+import { catchError, combineLatest, filter, firstValueFrom, of } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
+import { Profile } from './github.model';
 
 @Injectable({
   providedIn: 'root',

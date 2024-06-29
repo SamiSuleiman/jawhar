@@ -11,7 +11,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { debounceTime, startWith, tap } from 'rxjs';
+import { debounceTime, tap } from 'rxjs';
 import { SearchIconComponent } from '../ui/icons/search-icon.component';
 import { NavbarComponent } from '../ui/navbar.component';
 import { TagService } from './tag.service';
@@ -65,8 +65,6 @@ export class TagListComponent implements OnInit {
   private readonly router = inject(Router);
 
   private readonly $internalTags = signal<string[]>([]);
-
-  readonly $isLoading = signal(false);
 
   readonly searchCtrl = new FormControl('');
   readonly $tags = signal<string[]>([]);
