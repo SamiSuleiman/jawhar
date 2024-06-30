@@ -21,12 +21,13 @@ Gist-based blogging system. Create gists and view them in a blog-like format at 
 > posts marked with `true {#draft}` will not be shown
 
 ```markdown
-# TITLE HERE {#title}
-# tag1, tag2 {#tags}
-# link to image {#thumbnail}
-# true {#draft}
+# <insert title here> {#title} -- required
+# <tag1, tag2> {#tags} -- at least 1 is required
+# <insert image url> to image {#thumbnail}
+# <true/false> {#draft}
+# <insert url to markdown file that will replace the content> {#content}
 
-CONTENT HERE
+INSERT CONTENT HERE
 ```
 
 - Visit [jawhar.samisul.com](https://jawhar.samisul.com)
