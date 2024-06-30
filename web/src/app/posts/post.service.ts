@@ -124,6 +124,12 @@ export class PostService {
     const _draftContent = _draft?.textContent;
     const _content = _contentUrl?.textContent;
 
+    _tags?.remove();
+    _title?.remove();
+    _thumbnail?.remove();
+    _draft?.remove();
+    _contentUrl?.remove();
+
     return {
       title: _titleContent ?? '',
       tags: _tagsContent ?? [],
