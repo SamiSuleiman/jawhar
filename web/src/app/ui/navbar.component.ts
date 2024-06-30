@@ -14,7 +14,30 @@ import { UiService } from './ui.service';
   template: `
     <div class="navbar bg-base-100">
       <ul class="menu menu-horizontal px-1 flex w-full justify-between">
-        <li (click)="goto('')" class="font-extrabold text-2xl"><a>ج</a></li>
+        <li class="hidden sm:block">
+          <details>
+            <summary class="font-extrabold text-2xl">ج</summary>
+            <ul class="bg-base-100 rounded-t-none p-2">
+              <li class="w-60">
+                <a
+                  class="no-underline"
+                  target="_blank"
+                  href="https://github.com/samisul/jawhar"
+                  >GitHub</a
+                >
+              </li>
+              <li>
+                <a
+                  class="no-underline"
+                  target="_blank"
+                  href="https://github.com/samisul/jawhar/blob/0c98757994e3a2cf4bf523d9fb2ed72ec0649549/readme.md#usage"
+                  >Get started with your own blog!</a
+                >
+              </li>
+            </ul>
+          </details>
+        </li>
+
         <div class="flex">
           <li
             (click)="goto('overview')"
