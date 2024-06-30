@@ -5,12 +5,15 @@ import { markedHighlight } from 'marked-highlight';
 import { GithubService } from '../github/github.service';
 //@ts-ignore
 import customHeadingId from 'marked-custom-heading-id';
-import { Post } from './post.model';
+import { Post, PostMetadata } from './post.model';
+import { HttpClient } from '@angular/common/http';
+import { catchError, filter, firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PostService {
+  private readonly http = inject(HttpClient);
   private readonly ghService = inject(GithubService);
   private readonly marked = new Marked(
     markedHighlight({
@@ -71,32 +74,63 @@ export class PostService {
   }
 
   private async parsePost(post: string): Promise<Post | undefined> {
-    const _postInHTML = await this.marked.parse(post);
+    const _metadata = await this.getPostMetadata(post);
 
+    if (
+      _metadata.title.length === 0 ||
+      _metadata.tags.length === 0 ||
+      _metadata.draft
+    )
+      return;
+
+    if (_metadata.contentUrl.length > 0) {
+      const _content = await firstValueFrom(
+        this.http
+          .get(_metadata.contentUrl, {
+            responseType: 'text',
+          })
+          .pipe(
+            catchError(() => ''),
+            filter((c): c is string => !!c)
+          )
+      );
+
+      const _postInHTML = await this.marked.parse(_content);
+      const html = new DOMParser().parseFromString(_postInHTML, 'text/html');
+      _metadata.content = html.body.innerHTML;
+    }
+
+    return {
+      title: _metadata.title,
+      content: _metadata.content,
+      tags: _metadata.tags,
+      thumbnail: _metadata.thumbnail,
+    };
+  }
+
+  private async getPostMetadata(post: string): Promise<PostMetadata> {
+    const _postInHTML = await this.marked.parse(post);
     const html = new DOMParser().parseFromString(_postInHTML, 'text/html');
 
     const _title = html.getElementById('title');
     const _tags = html.getElementById('tags');
     const _thumbnail = html.getElementById('thumbnail');
     const _draft = html.getElementById('draft');
+    const _contentUrl = html.getElementById('content');
 
     const _titleContent = _title?.textContent;
     const _tagsContent = _tags?.textContent?.split(',');
     const _thumbnailContent = _thumbnail?.textContent;
     const _draftContent = _draft?.textContent;
-
-    if (!_titleContent || !_tagsContent || _draftContent === 'true') return;
-
-    _title.remove();
-    _tags?.remove();
-    _thumbnail?.remove();
-    _draft?.remove();
+    const _content = _contentUrl?.textContent;
 
     return {
-      title: _titleContent,
-      content: html.body.innerHTML,
-      tags: _tagsContent,
+      title: _titleContent ?? '',
+      tags: _tagsContent ?? [],
       thumbnail: _thumbnailContent ?? undefined,
+      draft: _draftContent === 'true',
+      contentUrl: _content ?? '',
+      content: html.body.innerHTML,
     };
   }
 }
