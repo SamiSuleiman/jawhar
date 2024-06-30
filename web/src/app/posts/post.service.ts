@@ -78,16 +78,19 @@ export class PostService {
     const _title = html.getElementById('title');
     const _tags = html.getElementById('tags');
     const _thumbnail = html.getElementById('thumbnail');
+    const _draft = html.getElementById('draft');
 
     const _titleContent = _title?.textContent;
     const _tagsContent = _tags?.textContent?.split(',');
     const _thumbnailContent = _thumbnail?.textContent;
+    const _draftContent = _draft?.textContent;
 
-    if (!_titleContent || !_tagsContent) return;
+    if (!_titleContent || !_tagsContent || _draftContent === 'true') return;
 
     _title.remove();
     _tags?.remove();
     _thumbnail?.remove();
+    _draft?.remove();
 
     return {
       title: _titleContent,
