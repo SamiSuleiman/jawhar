@@ -1,4 +1,12 @@
 export interface Profile {
-  name: string;
+  username: string;
+  displayName: string;
   avatarUrl: string;
+  posts: string[];
+}
+
+export interface ProfileHistoryEntry {
+  username: string;
+  avatarUrl: string;
+  timestamp: number;
 }

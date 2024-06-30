@@ -1,66 +1,46 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   OnInit,
   inject,
+  input,
+  signal,
 } from '@angular/core';
-import { NavbarComponent } from '../ui/navbar.component';
-import { Router, RouterLink } from '@angular/router';
-import { TagService } from './tag.service';
-import { GithubService } from '../github/github.service';
-import { AuthService } from '../auth/auth.service';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { BehaviorSubject, debounceTime, skip, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { AsyncPipe } from '@angular/common';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { debounceTime, tap } from 'rxjs';
+import { SearchIconComponent } from '../ui/icons/search-icon.component';
+import { NavbarComponent } from '../ui/navbar.component';
+import { TagService } from './tag.service';
 
 @Component({
   template: `
-    <app-navbar>
-      <div class="flex items-center lg:gap-6 mb-4">
-        <div class="flex items-center">
-          <li><a [routerLink]="['/user']">/user</a></li>
-          <li><a [routerLink]="['/posts']">/posts</a></li>
-          <li><a [routerLink]="['/tags']">\\tags</a></li>
-        </div>
-        <li class="underline decoration-wavy font-bold">
-          <a [routerLink]="['/search']">exit</a>
-        </li>
-      </div>
-    </app-navbar>
+    <app-navbar> </app-navbar>
 
     <label class="input input-bordered flex items-center gap-2 flex-grow">
       <input
         type="text"
         class="grow"
         placeholder="Search"
-        [formControl]="searchVal"
+        [formControl]="searchCtrl"
       />
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 16 16"
-        fill="currentColor"
-        class="w-4 h-4 opacity-70"
-      >
-        <path
-          fill-rule="evenodd"
-          d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-          clip-rule="evenodd"
-        />
-      </svg>
+      <app-search-icon></app-search-icon>
     </label>
     <div
       class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center m-2"
     >
       <ul class="flex flex-col gap-2">
-        @for (tag of _tags$ | async; track tag) {
-          <li class="hover:underline">
-            <a [routerLink]="['/tags', tag]">
-              - <span>{{ tag }}</span>
-            </a>
-          </li>
+        @for (tag of $tags(); track tag) {
+        <li class="hover:underline">
+          <a (click)="goto(tag)">
+            - <span>{{ tag }}</span>
+          </a>
+        </li>
         } @empty {
-          <li>No tags found.</li>
+        <li>No tags found.</li>
         }
       </ul>
     </div>
@@ -68,42 +48,56 @@ import { AsyncPipe } from '@angular/common';
   styles: ``,
   selector: 'app-tag-list',
   standalone: true,
-  imports: [NavbarComponent, RouterLink, ReactiveFormsModule, AsyncPipe],
+  imports: [
+    NavbarComponent,
+    RouterLink,
+    ReactiveFormsModule,
+    AsyncPipe,
+    SearchIconComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagListComponent implements OnInit {
-  private readonly ghService = inject(GithubService);
+  readonly $username = input.required<string>({ alias: 'username' });
+
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly tagService = inject(TagService);
   private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
-  readonly tagService = inject(TagService);
 
-  readonly _tags$ = new BehaviorSubject<string[]>([]);
+  private readonly $internalTags = signal<string[]>([]);
 
-  readonly searchVal = new FormControl('');
+  readonly searchCtrl = new FormControl('');
+  readonly $tags = signal<string[]>([]);
 
-  constructor() {
-    this.searchVal.valueChanges
+  async ngOnInit(): Promise<void> {
+    const _tags = await this.getTags(false);
+    this.$tags.set(_tags);
+
+    this.searchCtrl.valueChanges
       .pipe(
-        skip(1),
-        debounceTime(400),
-        tap((val) => {
-          const _originalTags = this.tagService.$tags();
-          if (!val) this._tags$.next(_originalTags);
-          else
-            this._tags$.next(
-              _originalTags.filter((tag) =>
-                tag.toLowerCase().includes(val.toLowerCase()),
-              ),
-            );
+        debounceTime(200),
+        tap((search) => {
+          const _tags = this.$internalTags();
+          this.$tags.set(
+            search
+              ? _tags.filter((tag) =>
+                  tag.toLowerCase().includes(search.toLowerCase())
+                )
+              : _tags
+          );
         }),
-        takeUntilDestroyed(),
+        takeUntilDestroyed(this.destroyRef)
       )
       .subscribe();
   }
 
-  ngOnInit(): void {
-    this.authService.login();
-    if (!this.ghService.$profile()) this.router.navigate(['search']);
-    this._tags$.next(this.tagService.$tags());
+  async getTags(refresh: boolean): Promise<string[]> {
+    const _tags = await this.tagService.getUserTags(this.$username(), refresh);
+    this.$internalTags.set(_tags);
+    return _tags;
+  }
+
+  goto(tag: string) {
+    this.router.navigate([`/tags/${this.$username()}/${tag}`]);
   }
 }

@@ -3,6 +3,7 @@ import { AuthController } from './auth.controller';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { GithubStrategy } from './github.strategy';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { GithubStrategy } from './github.strategy';
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    HttpModule,
   ],
   controllers: [AuthController],
   providers: [GithubStrategy],

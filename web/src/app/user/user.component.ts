@@ -3,39 +3,28 @@ import {
   Component,
   OnInit,
   inject,
+  input,
+  signal,
 } from '@angular/core';
-import { NavbarComponent } from '../ui/navbar.component';
 import { Router, RouterLink } from '@angular/router';
 import { GithubService } from '../github/github.service';
-import { AuthService } from '../auth/auth.service';
+import { NavbarComponent } from '../ui/navbar.component';
+import { Profile } from '../github/github.model';
 
 @Component({
   template: `
-    <app-navbar>
-      <div class="flex items-center lg:gap-6 mb-4">
-        <div class="flex items-center">
-          <li><a [routerLink]="['/user']">\\user</a></li>
-          <li><a [routerLink]="['/posts']">/posts</a></li>
-          <li><a [routerLink]="['/tags']">/tags</a></li>
-        </div>
-        <li class="underline decoration-wavy font-bold">
-          <a [routerLink]="['/search']">exit</a>
-        </li>
-      </div>
-    </app-navbar>
+    <app-navbar> </app-navbar>
     <div>
-      @if (ghService.$profile(); as profile) {
-        <div class="flex flex-col items-center">
-          <div class="avatar">
-            <div class="w-32 rounded">
-              <img [src]="profile.avatarUrl" />
-            </div>
+      @if ($profile(); as profile) {
+      <div class="flex flex-col items-center">
+        <div class="avatar">
+          <div class="w-32 rounded">
+            <img [src]="profile.avatarUrl" />
           </div>
-          <p class="font-bold text-2xl">{{ profile.name }}</p>
-          <p>posts: {{ ghService.$gistFiles().length }}</p>
         </div>
-      } @else {
-        <p>no profile.</p>
+        <p class="font-bold text-2xl">{{ profile.displayName }}</p>
+        <p>posts: {{ profile.posts.length }}</p>
+      </div>
       }
     </div>
   `,
@@ -46,12 +35,16 @@ import { AuthService } from '../auth/auth.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent implements OnInit {
-  private readonly router = inject(Router);
-  private readonly authService = inject(AuthService);
-  readonly ghService = inject(GithubService);
+  readonly $username = input.required<string>({ alias: 'username' });
 
-  ngOnInit(): void {
-    this.authService.login();
-    if (!this.ghService.$profile()) this.router.navigate(['search']);
+  private readonly router = inject(Router);
+  private readonly ghService = inject(GithubService);
+
+  readonly $profile = signal<Profile | undefined>(undefined);
+
+  async ngOnInit(): Promise<void> {
+    const _profile = await this.ghService.getProfile(this.$username());
+    if (!_profile) this.router.navigate(['/']);
+    this.$profile.set(_profile);
   }
 }

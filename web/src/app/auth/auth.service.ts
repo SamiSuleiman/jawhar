@@ -1,62 +1,104 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { catchError, firstValueFrom, of, tap, timer } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { TokenRes } from './auth.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private readonly router = inject(Router);
-  readonly $tokens = signal<{ access: string; refresh: string } | undefined>(
-    undefined,
-  );
+  private readonly httpClient = inject(HttpClient);
+  private readonly $isRefreshing = signal(false);
+  readonly $shouldLogin = signal(false);
+  readonly $tokens = signal<TokenRes | undefined>(undefined);
 
-  login(): void {
+  constructor() {
+    timer(100000, 100000)
+      .pipe(
+        tap(async () => {
+          const _tokens = await this.refreshToken();
+          if (!_tokens) this.logout();
+          else {
+            this.$tokens.set(_tokens);
+            localStorage.setItem('jawhar_tokens', JSON.stringify(_tokens));
+          }
+        })
+      )
+      .subscribe();
+  }
+
+  async login(): Promise<void> {
     const _tokensFromURL = this.getTokensFromURL();
     const _tokensFromLocalStorage = this.getTokensFromLocalStorage();
 
     if (_tokensFromLocalStorage) {
-      this.$tokens.set(_tokensFromLocalStorage);
+      const _refreshedTokens = await this.refreshToken();
+
+      if (!_refreshedTokens) this.logout();
+      else {
+        this.$tokens.set(_refreshedTokens);
+        localStorage.setItem('jawhar_tokens', JSON.stringify(_refreshedTokens));
+        this.router.navigate(['/']);
+      }
+
       return;
     }
 
     if (_tokensFromURL) {
       localStorage.setItem('jawhar_tokens', JSON.stringify(_tokensFromURL));
       this.$tokens.set(_tokensFromURL);
-      this.router.navigate(['/search']);
+      this.router.navigate(['/']);
       return;
     }
 
-    window.location.href = `${environment.serverUrl}/auth/github`;
+    this.logout();
   }
 
-  logout() {
+  logout(): void {
     localStorage.removeItem('jawhar_tokens');
     this.$tokens.set(undefined);
-    this.router.navigate(['/']);
+    this.redirectToLogin();
   }
 
-  private getTokensFromLocalStorage(): {
-    access: string;
-    refresh: string;
-  } | null {
-    const _tokens = localStorage.getItem('jawhar_tokens');
-    if (_tokens) {
-      return JSON.parse(_tokens) as { access: string; refresh: string };
+  async refreshToken(): Promise<TokenRes | undefined> {
+    if (this.$isRefreshing()) return;
+    this.$isRefreshing.set(true);
+    const _tokens = this.getTokensFromLocalStorage();
+    if (!_tokens) {
+      this.$isRefreshing.set(false);
+      this.logout();
+      return;
     }
 
-    return null;
+    return await firstValueFrom(
+      this.httpClient
+        .post<TokenRes>(`${environment.serverUrl}/auth/github/refresh`, _tokens)
+        .pipe(
+          catchError(() => of(undefined)),
+          tap(() => this.$isRefreshing.set(false))
+        )
+    );
   }
 
-  private getTokensFromURL(): { access: string; refresh: string } | null {
+  getTokensFromLocalStorage(): TokenRes | null {
+    const _tokens = localStorage.getItem('jawhar_tokens');
+    return _tokens
+      ? (JSON.parse(_tokens) as { access: string; refresh: string })
+      : null;
+  }
+
+  private getTokensFromURL(): TokenRes | null {
     const _url = new URL(window.location.href);
     const _access = _url.searchParams.get('access');
     const _refresh = _url.searchParams.get('refresh');
 
-    if (_access && _refresh) {
-      return { access: _access, refresh: _refresh };
-    }
+    return _access && _refresh ? { access: _access, refresh: _refresh } : null;
+  }
 
-    return null;
+  private redirectToLogin() {
+    window.location.href = `${environment.serverUrl}/auth/github`;
   }
 }

@@ -58,3 +58,8 @@ blockquote {
     @apply leading-relaxed;
   }
 }
+
+a {
+  @apply cursor-pointer;
+  @apply underline;
+}

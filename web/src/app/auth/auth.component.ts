@@ -18,6 +18,7 @@ export class AuthComponent implements OnInit {
   private readonly router = inject(Router);
 
   ngOnInit(): void {
+    console.log('AuthComponent: ngOnInit()');
     this.authService.login();
     this.router.navigate(['/search']);
   }

@@ -2,39 +2,31 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
+  computed,
   inject,
   input,
+  signal,
 } from '@angular/core';
-import { AuthService } from '../auth/auth.service';
+import { Router, RouterLink } from '@angular/router';
 import { NavbarComponent } from '../ui/navbar.component';
-import { RouterLink } from '@angular/router';
 import { TagService } from './tag.service';
+import { Post } from '../posts/post.model';
+import { PostService } from '../posts/post.service';
 
 @Component({
   template: `
-    <app-navbar>
-      <div class="flex items-center lg:gap-6 mb-4">
-        <div class="flex items-center">
-          <li><a [routerLink]="['/user']">/user</a></li>
-          <li><a [routerLink]="['/posts']">/posts</a></li>
-          <li><a [routerLink]="['/tags']">\\tags</a></li>
-        </div>
-        <li class="underline decoration-wavy font-bold">
-          <a [routerLink]="['/search']">exit</a>
-        </li>
-      </div>
-    </app-navbar>
+    <app-navbar> </app-navbar>
 
     <div
       class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center"
     >
       <ul class="flex flex-col gap-2">
-        @for (post of tagService.getTagPosts($tag()); track post) {
-          <li class="hover:underline">
-            <a [routerLink]="['/posts', post.title]">
-              - <span>{{ post.title }}</span>
-            </a>
-          </li>
+        @for (post of $posts(); track post) {
+        <li class="hover:underline">
+          <a (click)="goto(post.title)">
+            - <span>{{ post.title }}</span>
+          </a>
+        </li>
         }
       </ul>
     </div>
@@ -46,12 +38,26 @@ import { TagService } from './tag.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagComponent implements OnInit {
-  private readonly authService = inject(AuthService);
+  readonly $username = input.required<string>({ alias: 'username' });
+  readonly $tag = input.required<string>({ alias: 'tag' });
+
+  private readonly router = inject(Router);
   readonly tagService = inject(TagService);
+  readonly postService = inject(PostService);
 
-  $tag = input.required<string>({ alias: 'tag' });
+  readonly $posts = signal<Post[]>([]);
 
-  ngOnInit(): void {
-    this.authService.login();
+  async ngOnInit(): Promise<void> {
+    const _posts = await this.postService.getParsedPosts(
+      this.$username(),
+      false,
+      [this.$tag()]
+    );
+
+    this.$posts.set(_posts);
+  }
+
+  goto(title: string) {
+    this.router.navigate([`/posts/${this.$username()}/${title}`]);
   }
 }
