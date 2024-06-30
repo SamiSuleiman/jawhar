@@ -81,7 +81,7 @@ export class GithubService {
 
       if (!data) return;
 
-      const _files = await this.getGistFiles(username);
+      const _files = await this.fetchGistFiles(username);
 
       if (!_files) return;
 
@@ -107,13 +107,11 @@ export class GithubService {
     }
   }
 
-  private async getGistFiles(username: string): Promise<string[] | undefined> {
+  private async fetchGistFiles(
+    username: string
+  ): Promise<string[] | undefined> {
     try {
-      const { data } = await this.octokit.rest.gists.listForUser({
-        username,
-      });
-
-      const gist = data?.find((g: any) => g.description === 'jawhar');
+      const gist = await this.fetchJawharGist(username);
       const rawGistFileUrls: string[] = [];
 
       if (!gist?.files) return [];
@@ -148,6 +146,23 @@ export class GithubService {
       if (e.message.includes(GITHUB_BAD_CREDS))
         this.authService.$shouldLogin.set(true);
       return;
+    }
+  }
+
+  private async fetchJawharGist(username: string): Promise<any> {
+    let res: any;
+    let page = 1;
+
+    while (
+      (res = await this.octokit.rest.gists.listForUser({
+        username,
+        page,
+      }))
+    ) {
+      if (!res || !res.data || res.data.length === 0) return;
+      const gist = res?.data?.find((g: any) => g.description === 'jawhar');
+      if (gist) return gist;
+      page++;
     }
   }
 }
