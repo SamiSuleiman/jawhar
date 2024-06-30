@@ -4,3 +4,9 @@ export interface Profile {
   avatarUrl: string;
   posts: string[];
 }
+
+export interface ProfileHistoryEntry {
+  username: string;
+  avatarUrl: string;
+  timestamp: number;
+}
