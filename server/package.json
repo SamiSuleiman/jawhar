@@ -40,7 +40,7 @@
     "@types/node": "^20.14.10",
     "@types/passport-github2": "^1.2.9",
     "@types/supertest": "^6.0.0",
-    "@typescript-eslint/eslint-plugin": "^7.15.0",
+    "@typescript-eslint/eslint-plugin": "^7.16.1",
     "@typescript-eslint/parser": "^7.15.0",
     "eslint": "^8.42.0",
     "eslint-config-prettier": "^9.0.0",
