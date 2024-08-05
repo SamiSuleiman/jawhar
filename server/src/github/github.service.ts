@@ -11,18 +11,22 @@ export class GithubService {
   constructor(private readonly httpService: HttpService) {}
 
   async fetchJawharGistFileUrls(username: string): Promise<string[]> {
-    const _gistUrl = await this.fetchJawharGistUrl(username);
-    const $ = cheerio.load(
-      (
-        await firstValueFrom(
-          this.httpService.get(`${this.githubBaseUrl}${_gistUrl}`),
-        )
-      ).data,
-    );
+    try {
+      const _gistUrl = await this.fetchJawharGistUrl(username);
+      const $ = cheerio.load(
+        (
+          await firstValueFrom(
+            this.httpService.get(`${this.githubBaseUrl}${_gistUrl}`),
+          )
+        ).data,
+      );
 
-    return $('.file-actions > a')
-      .toArray()
-      .map((el) => $(el).attr('href'));
+      return $('.file-actions > a')
+        .toArray()
+        .map((el) => $(el).attr('href'));
+    } catch {
+      return [];
+    }
   }
 
   // TODO: maybe refactor this to return an observable instead?
