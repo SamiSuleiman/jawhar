@@ -10,3 +10,8 @@ export interface ProfileHistoryEntry {
   avatarUrl: string;
   timestamp: number;
 }
+
+export interface ProfileDto {
+  displayName: string;
+  avatarUrl: string;
+}
