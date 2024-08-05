@@ -18,13 +18,13 @@ import { HistoryComponent } from './history.component';
               <input [(ngModel)]="name" type="text" placeholder="search" />
             </label>
             @if ($isLoading()) {
-            <button class="btn btn-square">
-              <span class="loading loading-spinner"></span>
-            </button>
+              <button class="btn btn-square">
+                <span class="loading loading-spinner"></span>
+              </button>
             } @else {
-            <button class="btn rounded-none" (click)="onSubmit()">
-              submit
-            </button>
+              <button class="btn rounded-none" (click)="onSubmit()">
+                submit
+              </button>
             }
           </div>
         </div>
