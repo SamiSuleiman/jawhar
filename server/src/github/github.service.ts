@@ -3,44 +3,87 @@ import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 import * as cheerio from 'cheerio';
 import { AxiosResponse } from 'axios';
+import { ProfileDto } from './github.model';
 
 @Injectable()
 export class GithubService {
-  private readonly githubBaseUrl = 'https://gist.github.com';
+  private readonly githubGistBaseUrl = 'https://gist.github.com';
+  private readonly githubBaseUrl = 'https://github.com';
 
   constructor(private readonly httpService: HttpService) {}
 
-  async fetchJawharGistFileUrls(username: string): Promise<string[]> {
+  async fetchGistFiles(username: string): Promise<string[]> {
     try {
-      const _gistUrl = await this.fetchJawharGistUrl(username);
-      const $ = cheerio.load(
-        (
-          await firstValueFrom(
-            this.httpService.get(`${this.githubBaseUrl}${_gistUrl}`),
-          )
-        ).data,
-      );
+      const _fileUrls = await this.fetchJawharGistFileUrls(username);
 
-      return $('.file-actions > a')
-        .toArray()
-        .map((el) => $(el).attr('href'));
+      return await Promise.all(
+        _fileUrls.map(
+          async (url) =>
+            (
+              await firstValueFrom(
+                this.httpService.get<string>(`${this.githubGistBaseUrl}${url}`),
+              )
+            ).data,
+        ),
+      );
     } catch {
       return [];
     }
   }
 
+  async fetchProfile(username: string): Promise<ProfileDto | undefined> {
+    try {
+      const $ = cheerio.load(
+        (
+          await firstValueFrom(
+            this.httpService.get(`${this.githubBaseUrl}/${username}`),
+          )
+        ).data,
+      );
+
+      return {
+        avatarUrl: $('.avatar-user').attr('src'),
+        displayName: $('.p-name').text() ?? $('.p-nickname').text(),
+      };
+    } catch {
+      return;
+    }
+  }
+
+  private async fetchJawharGistFileUrls(username: string): Promise<string[]> {
+    const _gistUrl = await this.fetchJawharGistUrl(username);
+    const $ = cheerio.load(
+      (
+        await firstValueFrom(
+          this.httpService.get(`${this.githubGistBaseUrl}${_gistUrl}`),
+        )
+      ).data,
+    );
+
+    return $('.file-actions > a')
+      .toArray()
+      .map((el) => $(el).attr('href'))
+      .filter((url) => {
+        const _split = url.split('.');
+        const _fileExtension = _split[_split.length - 1];
+        return _fileExtension === 'md';
+      });
+  }
+
   // TODO: maybe refactor this to return an observable instead?
   private async fetchJawharGistUrl(username: string): Promise<string> {
-    let res: AxiosResponse;
-    let page = 1;
+    let _res: AxiosResponse;
+    let _page = 1;
 
     while (
-      (res = await firstValueFrom(
-        this.httpService.get(`${this.githubBaseUrl}/${username}?page=${page}`),
+      (_res = await firstValueFrom(
+        this.httpService.get(
+          `${this.githubGistBaseUrl}/${username}?page=${_page}`,
+        ),
       ))
     ) {
-      if (!res || !res.data || res.data.length === 0) return;
-      const $ = cheerio.load(res.data);
+      if (!_res || !_res.data || _res.data.length === 0) return;
+      const $ = cheerio.load(_res.data);
       const _snippetEl = $('.gist-snippet');
 
       if (_snippetEl.length === 0) return;
@@ -55,7 +98,7 @@ export class GithubService {
         return $(_el.parent.parent.parent).find('ul > li > a').attr('href');
 
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      page++;
+      _page++;
     }
   }
 }

@@ -22,6 +22,8 @@ export class GithubService {
   private readonly http = inject(HttpClient);
   private readonly $profiles = signal<Profile[]>([]);
 
+  private readonly githubGistBaseUrl = 'https://gist.github.com';
+
   async getProfile(
     username: string,
     refresh = false
@@ -95,36 +97,6 @@ export class GithubService {
   }
 
   private async fetchGistFiles(username: string): Promise<string[]> {
-    try {
-      const rawGistFileUrls = await this.getRawFileUrls(username);
-
-      return await firstValueFrom(
-        combineLatest(
-          rawGistFileUrls.map((url) =>
-            this.http.get(url, { responseType: 'text' }).pipe(
-              catchError(() => {
-                this.uiService.$alert.set({
-                  message: "Couldn't fetch the gist files.",
-                  type: 'error',
-                });
-                return of(null);
-              }),
-              filter((file): file is string => !!file)
-            )
-          )
-        ).pipe(filter((file) => !!file))
-      );
-    } catch (e: any) {
-      this.uiService.$alert.set({
-        message: 'An error occurred. Please try again later.',
-        type: 'error',
-      });
-
-      return [];
-    }
-  }
-
-  private async getRawFileUrls(username: string): Promise<string[]> {
     return await firstValueFrom(
       this.http
         .get<ListResDto<string>>(
