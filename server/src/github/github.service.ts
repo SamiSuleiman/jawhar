@@ -7,7 +7,7 @@ import { Marked } from 'marked';
 import * as customHeadingId from 'marked-custom-heading-id';
 import { markedHighlight } from 'marked-highlight';
 import { parse } from 'node-html-parser';
-import { catchError, filter, firstValueFrom, map } from 'rxjs';
+import { filter, firstValueFrom, map } from 'rxjs';
 import { Post, PostMetadata, ProfileDto } from './github.model';
 
 @Injectable()
@@ -124,38 +124,44 @@ export class GithubService {
   }
 
   private async parsePost(post: string): Promise<Post | undefined> {
-    const _metadata = await this.getPostMetadata(post);
+    try {
+      const _metadata = await this.getPostMetadata(post);
 
-    if (
-      _metadata.title.length === 0 ||
-      _metadata.tags.length === 0 ||
-      _metadata.draft
-    )
+      if (
+        _metadata.title.length === 0 ||
+        _metadata.tags.length === 0 ||
+        _metadata.draft
+      )
+        return;
+
+      if (_metadata.contentUrl.length > 0) {
+        const _content = await firstValueFrom(
+          this.httpService
+            .get(_metadata.contentUrl, {
+              responseType: 'text',
+            })
+            .pipe(
+              filter((c): c is AxiosResponse => !!c),
+              map((res) => res.data),
+            ),
+        );
+
+        const _postInHTML = await this.marked.parse(_content);
+        const html = parse(_postInHTML);
+        _metadata.content = (
+          await this.getPostMetadata(html.innerHTML)
+        ).content;
+      }
+
+      return {
+        title: _metadata.title,
+        content: _metadata.content,
+        tags: _metadata.tags,
+        thumbnail: _metadata.thumbnail,
+      };
+    } catch {
       return;
-
-    if (_metadata.contentUrl.length > 0) {
-      const _content = await firstValueFrom(
-        this.httpService
-          .get(_metadata.contentUrl, {
-            responseType: 'text',
-          })
-          .pipe(
-            catchError(() => ''),
-            filter((c): c is string => !!c),
-          ),
-      );
-
-      const _postInHTML = await this.marked.parse(_content);
-      const html = parse(_postInHTML);
-      _metadata.content = html.innerHTML;
     }
-
-    return {
-      title: _metadata.title,
-      content: _metadata.content,
-      tags: _metadata.tags,
-      thumbnail: _metadata.thumbnail,
-    };
   }
 
   private async getPostMetadata(post: string): Promise<PostMetadata> {
