@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Param } from '@nestjs/common';
 import { GithubService } from './github.service';
 import { Get } from '@nestjs/common';
 
@@ -6,8 +6,8 @@ import { Get } from '@nestjs/common';
 export class GithubController {
   constructor(private readonly githubService: GithubService) {}
 
-  @Get()
-  async getPosts() {
-    return { res: await this.githubService.fetchJawharGistUrl() };
+  @Get('posts/:username')
+  async getPosts(@Param('username') username: string) {
+    return { res: await this.githubService.fetchJawharGistFileUrls(username) };
   }
 }

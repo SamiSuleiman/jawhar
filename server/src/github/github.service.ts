@@ -6,15 +6,33 @@ import { AxiosResponse } from 'axios';
 
 @Injectable()
 export class GithubService {
+  private readonly githubBaseUrl = 'https://gist.github.com';
+
   constructor(private readonly httpService: HttpService) {}
 
-  async fetchJawharGistUrl() {
+  async fetchJawharGistFileUrls(username: string): Promise<string[]> {
+    const _gistUrl = await this.fetchJawharGistUrl(username);
+    const $ = cheerio.load(
+      (
+        await firstValueFrom(
+          this.httpService.get(`${this.githubBaseUrl}${_gistUrl}`),
+        )
+      ).data,
+    );
+
+    return $('.file-actions > a')
+      .toArray()
+      .map((el) => $(el).attr('href'));
+  }
+
+  // TODO: maybe refactor this to return an observable instead?
+  private async fetchJawharGistUrl(username: string): Promise<string> {
     let res: AxiosResponse;
     let page = 1;
 
     while (
       (res = await firstValueFrom(
-        this.httpService.get(`https://gist.github.com/samisul?page=${page}`),
+        this.httpService.get(`${this.githubBaseUrl}/${username}?page=${page}`),
       ))
     ) {
       if (!res || !res.data || res.data.length === 0) return;
