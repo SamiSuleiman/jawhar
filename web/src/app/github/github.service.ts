@@ -1,18 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import {
-  catchError,
-  combineLatest,
-  filter,
-  firstValueFrom,
-  map,
-  of,
-} from 'rxjs';
-import { Profile, ProfileDto, ProfileHistoryEntry } from './github.model';
-import { UiService } from '../ui/ui.service';
-import { GITHUB_HISTORY_KEY } from './github.consts';
+import { firstValueFrom, map } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ListResDto } from '../core/dtos/res.dto';
+import { UiService } from '../ui/ui.service';
+import { GITHUB_HISTORY_KEY } from './github.consts';
+import { Profile, ProfileDto, ProfileHistoryEntry } from './github.model';
+import { Post } from '../posts/post.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,8 +15,6 @@ export class GithubService {
   private readonly uiService = inject(UiService);
   private readonly http = inject(HttpClient);
   private readonly $profiles = signal<Profile[]>([]);
-
-  private readonly githubGistBaseUrl = 'https://gist.github.com';
 
   async getProfile(
     username: string,
@@ -96,10 +88,10 @@ export class GithubService {
     } as Profile;
   }
 
-  private async fetchGistFiles(username: string): Promise<string[]> {
+  private async fetchGistFiles(username: string): Promise<Post[]> {
     return await firstValueFrom(
       this.http
-        .get<ListResDto<string>>(
+        .get<ListResDto<Post>>(
           `${environment.serverUrl}/github/posts/${username}`
         )
         .pipe(map((data) => data.list))
