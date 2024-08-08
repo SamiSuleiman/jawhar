@@ -68,13 +68,16 @@ export class GithubService {
   private async fetchProfile(username: string): Promise<Profile | undefined> {
     if (username.length === 0) return;
 
-    const data = await firstValueFrom(
+    const _data = await firstValueFrom(
       this.http.get<ProfileDto | undefined>(
         `${environment.serverUrl}/github/profile/${username}`
       )
     );
 
-    if (!data) return;
+    if (!_data) {
+      this.uiService.setAlert('No profile was found.', 'info');
+      return;
+    }
 
     const _files = await this.fetchGistFiles(username);
 
@@ -82,8 +85,8 @@ export class GithubService {
 
     return {
       username: username,
-      displayName: data.displayName,
-      avatarUrl: data.avatarUrl,
+      displayName: _data.displayName,
+      avatarUrl: _data.avatarUrl,
       posts: _files,
     } as Profile;
   }

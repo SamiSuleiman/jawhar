@@ -73,6 +73,9 @@ export class GithubService {
 
   private async fetchJawharGistFileUrls(username: string): Promise<string[]> {
     const _gistUrl = await this.fetchJawharGistUrl(username);
+
+    if (!_gistUrl) return [];
+
     const $ = cheerio.load(
       (
         await firstValueFrom(
