@@ -9,7 +9,7 @@ import { markedHighlight } from 'marked-highlight';
 import { parse } from 'node-html-parser';
 import { filter, firstValueFrom, map } from 'rxjs';
 import { Post, PostMetadata, ProfileDto } from './github.model';
-import { Config, ConfigSchema } from '../core/models/config.model';
+import { Config, ConfigSchema } from '../config/config.model';
 import zu from 'zod_utilz';
 
 @Injectable()

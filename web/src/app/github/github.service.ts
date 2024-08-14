@@ -1,12 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { firstValueFrom, map } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { ListResDto } from '../core/dtos/res.dto';
+import { FilesRes } from '../core/dtos/res.model';
 import { UiService } from '../ui/ui.service';
 import { GITHUB_HISTORY_KEY } from './github.consts';
-import { Profile, ProfileDto, ProfileHistoryEntry } from './github.model';
-import { Post } from '../posts/post.model';
+import { Profile, ProfileHistoryEntry, ProfileRes } from './github.model';
 
 @Injectable({
   providedIn: 'root',
@@ -69,8 +68,8 @@ export class GithubService {
     if (username.length === 0) return;
 
     const _data = await firstValueFrom(
-      this.http.get<ProfileDto | undefined>(
-        `${environment.serverUrl}/github/profile/${username}`
+      this.http.get<ProfileRes | undefined>(
+        `${environment.serverUrl}/github/${username}/profile`
       )
     );
 
@@ -87,17 +86,16 @@ export class GithubService {
       username: username,
       displayName: _data.displayName,
       avatarUrl: _data.avatarUrl,
-      posts: _files,
+      posts: _files.posts.list,
+      config: _files.config,
     } as Profile;
   }
 
-  private async fetchGistFiles(username: string): Promise<Post[]> {
+  private async fetchGistFiles(username: string): Promise<FilesRes> {
     return await firstValueFrom(
-      this.http
-        .get<ListResDto<Post>>(
-          `${environment.serverUrl}/github/posts/${username}`
-        )
-        .pipe(map((data) => data.list))
+      this.http.get<FilesRes>(
+        `${environment.serverUrl}/github/${username}/files`
+      )
     );
   }
 }

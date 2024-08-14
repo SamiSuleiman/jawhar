@@ -1,3 +1,4 @@
+import { Config } from '../config/config.model';
 import { Post } from '../posts/post.model';
 
 export interface Profile {
@@ -5,6 +6,7 @@ export interface Profile {
   displayName: string;
   avatarUrl: string;
   posts: Post[];
+  config: Config;
 }
 
 export interface ProfileHistoryEntry {
@@ -13,7 +15,7 @@ export interface ProfileHistoryEntry {
   timestamp: number;
 }
 
-export interface ProfileDto {
+export interface ProfileRes {
   displayName: string;
   avatarUrl: string;
 }
