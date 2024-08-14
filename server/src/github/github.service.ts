@@ -9,6 +9,8 @@ import { markedHighlight } from 'marked-highlight';
 import { parse } from 'node-html-parser';
 import { filter, firstValueFrom, map } from 'rxjs';
 import { Post, PostMetadata, ProfileDto } from './github.model';
+import { Config, ConfigSchema } from '../core/models/config.model';
+import zu from 'zod_utilz';
 
 @Injectable()
 export class GithubService {
@@ -31,12 +33,18 @@ export class GithubService {
 
   constructor(private readonly httpService: HttpService) {}
 
-  async fetchGistFiles(username: string): Promise<Post[]> {
+  async fetchGistFiles(username: string): Promise<
+    | {
+        posts: Post[];
+        config: Config;
+      }
+    | undefined
+  > {
     try {
       const _fileUrls = await this.fetchJawharGistFileUrls(username);
-      return (
+      const _posts = (
         await Promise.all(
-          _fileUrls.map(
+          _fileUrls.posts.map(
             async (url) =>
               await firstValueFrom(
                 this.httpService
@@ -46,9 +54,24 @@ export class GithubService {
           ),
         )
       ).filter((post): post is Post => !!post);
-    } catch (e) {
-      console.log(e);
-      return [];
+      const _config = await firstValueFrom(
+        this.httpService
+          .get<string>(`${this.githubGistBaseUrl}${_fileUrls.config}`)
+          .pipe(
+            map((res: any) => {
+              const _res = zu.stringToJSON().safeParse(res.data);
+              if (!_res.success) return;
+              const _config = ConfigSchema.safeParse(_res.data);
+              return _config.data;
+            }),
+          ),
+      );
+      return {
+        posts: _posts,
+        config: _config,
+      };
+    } catch {
+      return;
     }
   }
 
@@ -71,10 +94,12 @@ export class GithubService {
     }
   }
 
-  private async fetchJawharGistFileUrls(username: string): Promise<string[]> {
+  private async fetchJawharGistFileUrls(
+    username: string,
+  ): Promise<{ posts: string[]; config: string } | undefined> {
     const _gistUrl = await this.fetchJawharGistUrl(username);
 
-    if (!_gistUrl) return [];
+    if (!_gistUrl) return;
 
     const $ = cheerio.load(
       (
@@ -84,14 +109,26 @@ export class GithubService {
       ).data,
     );
 
-    return $('.file-actions > a')
+    const _fileUrls = $('.file-actions > a')
       .toArray()
-      .map((el) => $(el).attr('href'))
-      .filter((url) => {
-        const _split = url.split('.');
-        const _fileExtension = _split[_split.length - 1];
-        return _fileExtension === 'md';
-      });
+      .map((el) => $(el).attr('href'));
+
+    const _postUrls = _fileUrls.filter((url) => {
+      const _split = url.split('.');
+      const _fileExtension = _split[_split.length - 1];
+      return _fileExtension === 'md';
+    });
+
+    const _configUrl = _fileUrls.find((url) => {
+      const _split = url.split('.');
+      const _fileExtension = _split[_split.length - 1];
+      return _fileExtension === 'json';
+    });
+
+    return {
+      posts: _postUrls,
+      config: _configUrl,
+    };
   }
 
   // TODO: maybe refactor this to return an observable instead?

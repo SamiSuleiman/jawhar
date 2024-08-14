@@ -47,6 +47,12 @@ dependencies:
   rxjs:
     specifier: ^7.8.1
     version: 7.8.1
+  zod:
+    specifier: ^3.23.8
+    version: 3.23.8
+  zod_utilz:
+    specifier: ^0.8.3
+    version: 0.8.3(typescript@5.5.4)(zod@3.23.8)
 
 devDependencies:
   '@nestjs/cli':
@@ -5152,7 +5158,6 @@ packages:
     resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
     engines: {node: '>=14.17'}
     hasBin: true
-    dev: true
 
   /uid@2.0.2:
     resolution: {integrity: sha512-u3xV3X7uzvi5b1MncmZo3i2Aw222Zk1keqLA1YkHldREkAhAqi65wuPfe7lHx8H/Wzy+8CE7S7uS3jekIM5s8g==}
@@ -5385,3 +5390,17 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  /zod@3.23.8:
+    resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
+    dev: false
+
+  /zod_utilz@0.8.3(typescript@5.5.4)(zod@3.23.8):
+    resolution: {integrity: sha512-8ga6g6J+QfWpGOTyhciu8uMioBVKPe7QTx9hSk+JW/NdralSLPR1LzMzxq4HuzOVdTYG/6T3cWflxoHiUuSyDA==}
+    peerDependencies:
+      typescript: ^5.0.0
+      zod: ^3.22.4
+    dependencies:
+      typescript: 5.5.4
+      zod: 3.23.8
+    dev: false

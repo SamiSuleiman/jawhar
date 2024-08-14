@@ -13,7 +13,7 @@ export class GithubController {
     @Param('username') username: string,
   ): Promise<ListResDto<Post>> {
     const _gistFileUrls = await this.githubService.fetchGistFiles(username);
-    return { list: _gistFileUrls, count: _gistFileUrls.length };
+    return { list: _gistFileUrls.posts, count: _gistFileUrls.posts.length };
   }
 
   @Get('profile/:username')
