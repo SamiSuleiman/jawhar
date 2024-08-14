@@ -8,9 +8,9 @@ import * as customHeadingId from 'marked-custom-heading-id';
 import { markedHighlight } from 'marked-highlight';
 import { parse } from 'node-html-parser';
 import { filter, firstValueFrom, map } from 'rxjs';
-import { Post, PostMetadata, ProfileDto } from './github.model';
 import { Config, ConfigSchema } from '../config/config.model';
-import zu from 'zod_utilz';
+import { Post, PostMetadata, ProfileDto } from './github.model';
+// import { zu } from 'zod_utilz';
 
 @Injectable()
 export class GithubService {
@@ -59,9 +59,8 @@ export class GithubService {
           .get<string>(`${this.githubGistBaseUrl}${_fileUrls.config}`)
           .pipe(
             map((res: any) => {
-              const _res = zu.stringToJSON().safeParse(res.data);
-              if (!_res.success) return;
-              const _config = ConfigSchema.safeParse(_res.data);
+              const _config = ConfigSchema.safeParse(res.data);
+              if (!_config.success) return;
               return _config.data;
             }),
           ),

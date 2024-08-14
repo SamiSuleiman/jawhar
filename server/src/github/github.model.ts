@@ -1,3 +1,6 @@
+import { Config } from 'src/config/config.model';
+import { ListResDto } from 'src/core/models/res.model';
+
 export interface ProfileDto {
   displayName: string;
   avatarUrl: string;
@@ -17,4 +20,9 @@ export interface PostMetadata {
   draft: boolean;
   contentUrl: string;
   content: string;
+}
+
+export interface FilesResDto {
+  posts: ListResDto<Post>;
+  config: Config;
 }

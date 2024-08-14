@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { FilesRes } from '../core/dtos/res.model';
+import { FilesRes } from '../core/models/res.model';
 import { UiService } from '../ui/ui.service';
 import { GITHUB_HISTORY_KEY } from './github.consts';
 import { Profile, ProfileHistoryEntry, ProfileRes } from './github.model';

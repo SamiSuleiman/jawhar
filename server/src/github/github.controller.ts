@@ -1,19 +1,18 @@
-import { Controller, Param } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
+import { FilesResDto, ProfileDto } from './github.model';
 import { GithubService } from './github.service';
-import { Get } from '@nestjs/common';
-import { ListResDto } from 'src/core/dtos/res.dto';
-import { Post, ProfileDto } from './github.model';
 
 @Controller('github')
 export class GithubController {
   constructor(private readonly githubService: GithubService) {}
 
   @Get(':username/files')
-  async getFiles(
-    @Param('username') username: string,
-  ): Promise<ListResDto<Post>> {
+  async getFiles(@Param('username') username: string): Promise<FilesResDto> {
     const _gistFileUrls = await this.githubService.fetchGistFiles(username);
-    return { list: _gistFileUrls.posts, count: _gistFileUrls.posts.length };
+    return {
+      posts: { list: _gistFileUrls.posts, count: _gistFileUrls.posts.length },
+      config: _gistFileUrls.config,
+    };
   }
 
   @Get(':username/profile')
