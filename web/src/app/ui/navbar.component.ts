@@ -1,14 +1,9 @@
 import { NgClass } from '@angular/common';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { RouteService } from '../core/services/route.service';
+import { ActivatedRoute } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
-import { UiService } from './ui.service';
 
 @Component({
   template: `
@@ -40,36 +35,42 @@ import { UiService } from './ui.service';
 
         <div class="flex">
           <li
-            (click)="goto('overview')"
-            [ngClass]="[isDisabled('overview') ? 'hidden' : '']"
+            (click)="routeService.goto('overview', $userInView())"
+            [ngClass]="[
+              routeService.isDisabled('overview', $userInView()) ? 'hidden' : ''
+            ]"
           >
             <a class="no-underline">{{
-              $route() === 'overview' ? 'Overview/' : '/Overview'
+              routeService.$route() === 'overview' ? 'Overview/' : '/Overview'
             }}</a>
           </li>
           <li
-            (click)="goto('posts')"
-            [ngClass]="[isDisabled('posts') ? 'hidden' : '']"
+            (click)="routeService.goto('posts', $userInView())"
+            [ngClass]="[
+              routeService.isDisabled('posts', $userInView()) ? 'hidden' : ''
+            ]"
           >
             <a class="no-underline">
-              {{ $route() === 'posts' ? 'Posts/' : '/Posts' }}
+              {{ routeService.$route() === 'posts' ? 'Posts/' : '/Posts' }}
             </a>
           </li>
           <li
-            (click)="goto('tags')"
-            [ngClass]="[isDisabled('tags') ? 'hidden' : '']"
+            (click)="routeService.goto('tags', $userInView())"
+            [ngClass]="[
+              routeService.isDisabled('tags', $userInView()) ? 'hidden' : ''
+            ]"
           >
             <a class="no-underline">
-              {{ $route() === 'tags' ? 'Tags/' : '/Tags' }}
+              {{ routeService.$route() === 'tags' ? 'Tags/' : '/Tags' }}
             </a>
           </li>
         </div>
         <div class="flex">
-          <li (click)="goto('')"><a>/Search</a></li>
+          <li (click)="routeService.goto('', $userInView())"><a>/Search</a></li>
         </div>
       </ul>
     </div>
-    @if(uiService.$isLoading()){
+    @if(routeService.$isLoading()){
 
     <progress class="progress w-full"></progress>
     }
@@ -80,32 +81,10 @@ import { UiService } from './ui.service';
   imports: [NgClass],
 })
 export class NavbarComponent {
-  private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
-  readonly uiService = inject(UiService);
+  readonly routeService = inject(RouteService);
 
-  private readonly $userInView = toSignal(
+  readonly $userInView = toSignal(
     this.route.params.pipe(map((p) => p['username']))
   );
-
-  readonly $route = signal('');
-
-  constructor() {
-    const _currRoute = window.location.pathname.split('/')[1];
-    this.$route.set(_currRoute);
-  }
-
-  goto(route: string): void {
-    if (route === '') {
-      this.router.navigate(['/']);
-    } else {
-      if (!this.$userInView()) return;
-      this.router.navigate([`/${route}/${this.$userInView()}`]);
-    }
-  }
-
-  isDisabled(route: string): boolean {
-    if (route === '') return false;
-    return !this.$userInView();
-  }
 }

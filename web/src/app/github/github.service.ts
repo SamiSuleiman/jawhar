@@ -80,7 +80,10 @@ export class GithubService {
 
     const _files = await this.fetchGistFiles(username);
 
-    if (!_files) return;
+    if (!_files) {
+      this.uiService.setAlert("This person doesn't use Jawhar. :(", 'info');
+      return;
+    }
 
     return {
       username: username,

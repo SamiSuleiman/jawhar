@@ -7,10 +7,18 @@ export class GithubController {
   constructor(private readonly githubService: GithubService) {}
 
   @Get(':username/files')
-  async getFiles(@Param('username') username: string): Promise<FilesResDto> {
+  async getFiles(
+    @Param('username') username: string,
+  ): Promise<FilesResDto | undefined> {
     const _gistFileUrls = await this.githubService.fetchGistFiles(username);
+
+    if (!_gistFileUrls) return undefined;
+
     return {
-      posts: { list: _gistFileUrls.posts, count: _gistFileUrls.posts.length },
+      posts: {
+        list: _gistFileUrls.posts,
+        count: _gistFileUrls.posts.length,
+      },
       config: _gistFileUrls.config,
     };
   }
