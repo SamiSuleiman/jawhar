@@ -2,21 +2,19 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  computed,
   inject,
   input,
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { NavbarComponent } from '../ui/navbar.component';
-import { TagService } from './tag.service';
 import { Post } from '../posts/post.model';
 import { PostService } from '../posts/post.service';
+import { LayoutComponent } from '../ui/layout.component';
+import { TagService } from './tag.service';
 
 @Component({
   template: `
-    <app-navbar> </app-navbar>
-
+    <app-layout></app-layout>
     <div
       class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center"
     >
@@ -34,7 +32,7 @@ import { PostService } from '../posts/post.service';
   styles: ``,
   selector: 'app-tags',
   standalone: true,
-  imports: [NavbarComponent, RouterLink],
+  imports: [RouterLink, LayoutComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagComponent implements OnInit {

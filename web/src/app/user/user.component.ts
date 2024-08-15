@@ -7,13 +7,13 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { GithubService } from '../github/github.service';
-import { NavbarComponent } from '../ui/navbar.component';
 import { Profile } from '../github/github.model';
+import { GithubService } from '../github/github.service';
+import { LayoutComponent } from '../ui/layout.component';
 
 @Component({
   template: `
-    <app-navbar> </app-navbar>
+    <app-layout></app-layout>
     <div>
       @if ($profile(); as profile) {
       <div class="flex flex-col items-center">
@@ -31,7 +31,7 @@ import { Profile } from '../github/github.model';
   styles: ``,
   selector: 'app-user',
   standalone: true,
-  imports: [NavbarComponent, RouterLink],
+  imports: [RouterLink, LayoutComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent implements OnInit {

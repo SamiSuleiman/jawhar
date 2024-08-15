@@ -13,13 +13,12 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { debounceTime, tap } from 'rxjs';
 import { SearchIconComponent } from '../ui/icons/search-icon.component';
-import { NavbarComponent } from '../ui/navbar.component';
+import { LayoutComponent } from '../ui/layout.component';
 import { TagService } from './tag.service';
 
 @Component({
   template: `
-    <app-navbar> </app-navbar>
-
+    <app-layout> </app-layout>
     <label class="input input-bordered flex items-center gap-2 flex-grow">
       <input
         type="text"
@@ -49,11 +48,11 @@ import { TagService } from './tag.service';
   selector: 'app-tag-list',
   standalone: true,
   imports: [
-    NavbarComponent,
     RouterLink,
     ReactiveFormsModule,
     AsyncPipe,
     SearchIconComponent,
+    LayoutComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

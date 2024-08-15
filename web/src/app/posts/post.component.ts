@@ -7,13 +7,13 @@ import {
   signal,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { NavbarComponent } from '../ui/navbar.component';
-import { PostService } from './post.service';
+import { LayoutComponent } from '../ui/layout.component';
 import { Post } from './post.model';
+import { PostService } from './post.service';
 
 @Component({
   template: `
-    <app-navbar> </app-navbar>
+    <app-layout> </app-layout>
     <div class="p-2 overflow-x-scroll">
       <h1 class="font-bold">{{ $post()?.title }}</h1>
       <img [src]="$post()?.thumbnail" alt="Thumbnail" />
@@ -22,7 +22,7 @@ import { Post } from './post.model';
   `,
   selector: 'app-post',
   standalone: true,
-  imports: [NavbarComponent, RouterLink],
+  imports: [RouterLink, LayoutComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PostComponent implements OnInit {

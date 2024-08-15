@@ -1,9 +1,11 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+} from '@angular/core';
 import { RouteService } from '../core/services/route.service';
-import { ActivatedRoute } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
 
 @Component({
   template: `
@@ -35,38 +37,32 @@ import { map } from 'rxjs';
 
         <div class="flex">
           <li
-            (click)="routeService.goto('overview', $userInView())"
+            (click)="routeService.goto('overview', $user())"
             [ngClass]="[
-              routeService.isDisabled('overview', $userInView()) ? 'hidden' : ''
+              routeService.isDisabled('overview', $user()) ? 'hidden' : ''
             ]"
           >
-            <a class="no-underline">{{
-              routeService.$route() === 'overview' ? 'Overview/' : '/Overview'
-            }}</a>
+            <a class="no-underline">Overview</a>
           </li>
           <li
-            (click)="routeService.goto('posts', $userInView())"
+            (click)="routeService.goto('posts', $user())"
             [ngClass]="[
-              routeService.isDisabled('posts', $userInView()) ? 'hidden' : ''
+              routeService.isDisabled('posts', $user()) ? 'hidden' : ''
             ]"
           >
-            <a class="no-underline">
-              {{ routeService.$route() === 'posts' ? 'Posts/' : '/Posts' }}
-            </a>
+            <a class="no-underline"> Posts </a>
           </li>
           <li
-            (click)="routeService.goto('tags', $userInView())"
+            (click)="routeService.goto('tags', $user())"
             [ngClass]="[
-              routeService.isDisabled('tags', $userInView()) ? 'hidden' : ''
+              routeService.isDisabled('tags', $user()) ? 'hidden' : ''
             ]"
           >
-            <a class="no-underline">
-              {{ routeService.$route() === 'tags' ? 'Tags/' : '/Tags' }}
-            </a>
+            <a class="no-underline"> Tags </a>
           </li>
         </div>
         <div class="flex">
-          <li (click)="routeService.goto('', $userInView())"><a>/Search</a></li>
+          <li (click)="routeService.goto('', $user())"><a>/Search</a></li>
         </div>
       </ul>
     </div>
@@ -81,10 +77,7 @@ import { map } from 'rxjs';
   imports: [NgClass],
 })
 export class NavbarComponent {
-  private readonly route = inject(ActivatedRoute);
   readonly routeService = inject(RouteService);
 
-  readonly $userInView = toSignal(
-    this.route.params.pipe(map((p) => p['username']))
-  );
+  $user = input.required<string>({ alias: 'user' });
 }

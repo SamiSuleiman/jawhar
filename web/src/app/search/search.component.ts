@@ -2,12 +2,12 @@ import { Component, HostListener, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { GithubService } from '../github/github.service';
-import { NavbarComponent } from '../ui/navbar.component';
+import { LayoutComponent } from '../ui/layout.component';
 import { HistoryComponent } from './history.component';
 
 @Component({
   template: `
-    <app-navbar> </app-navbar>
+    <app-layout> </app-layout>
     <div class="flex flex-col">
       <div class="p-1 mt-4 flex justify-start items-center">
         <div class="flex flex-col gap-2 w-full">
@@ -18,13 +18,13 @@ import { HistoryComponent } from './history.component';
               <input [(ngModel)]="name" type="text" placeholder="search" />
             </label>
             @if ($isLoading()) {
-              <button class="btn btn-square">
-                <span class="loading loading-spinner"></span>
-              </button>
+            <button class="btn btn-square">
+              <span class="loading loading-spinner"></span>
+            </button>
             } @else {
-              <button class="btn rounded-none" (click)="onSubmit()">
-                submit
-              </button>
+            <button class="btn rounded-none" (click)="onSubmit()">
+              submit
+            </button>
             }
           </div>
         </div>
@@ -35,7 +35,7 @@ import { HistoryComponent } from './history.component';
   styles: ``,
   selector: 'app-search',
   standalone: true,
-  imports: [NavbarComponent, FormsModule, HistoryComponent],
+  imports: [FormsModule, HistoryComponent, LayoutComponent],
 })
 export class SearchComponent {
   private readonly router = inject(Router);

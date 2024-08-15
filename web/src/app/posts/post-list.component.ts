@@ -13,15 +13,13 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { debounceTime, tap } from 'rxjs';
 import { SearchIconComponent } from '../ui/icons/search-icon.component';
-import { NavbarComponent } from '../ui/navbar.component';
+import { LayoutComponent } from '../ui/layout.component';
 import { Post } from './post.model';
 import { PostService } from './post.service';
-import { BottomNavComponent } from '../ui/bottom-nav.component';
 
 @Component({
   template: `
-    <app-navbar> </app-navbar>
-
+    <app-layout> </app-layout>
     <div class="flex gap-2">
       <label class="input input-bordered flex items-center gap-2 flex-grow">
         <input
@@ -53,12 +51,11 @@ import { BottomNavComponent } from '../ui/bottom-nav.component';
   selector: 'app-post-list',
   standalone: true,
   imports: [
-    BottomNavComponent,
-    NavbarComponent,
     RouterLink,
     ReactiveFormsModule,
     AsyncPipe,
     SearchIconComponent,
+    LayoutComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
