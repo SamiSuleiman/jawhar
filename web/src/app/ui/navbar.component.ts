@@ -6,6 +6,7 @@ import {
   input,
 } from '@angular/core';
 import { RouteService } from '../core/services/route.service';
+import { Route } from './ui.model';
 
 @Component({
   template: `
@@ -41,6 +42,7 @@ import { RouteService } from '../core/services/route.service';
             [ngClass]="[
               routeService.isDisabled('overview', $user()) ? 'hidden' : ''
             ]"
+            [ngClass]="$route() === 'overview' ? 'bg-gray-400 text-black' : ''"
           >
             <a class="no-underline">Overview</a>
           </li>
@@ -49,6 +51,7 @@ import { RouteService } from '../core/services/route.service';
             [ngClass]="[
               routeService.isDisabled('posts', $user()) ? 'hidden' : ''
             ]"
+            [ngClass]="$route() === 'posts' ? 'bg-gray-400 text-black' : ''"
           >
             <a class="no-underline"> Posts </a>
           </li>
@@ -57,12 +60,18 @@ import { RouteService } from '../core/services/route.service';
             [ngClass]="[
               routeService.isDisabled('tags', $user()) ? 'hidden' : ''
             ]"
+            [ngClass]="$route() === 'tags' ? 'bg-gray-400 text-black' : ''"
           >
             <a class="no-underline"> Tags </a>
           </li>
         </div>
         <div class="flex">
-          <li (click)="routeService.goto('', $user())"><a>/Search</a></li>
+          <li
+            (click)="routeService.goto('', $user())"
+            [ngClass]="$route() === 'search' ? 'bg-gray-400 text-black' : ''"
+          >
+            <a>/Search</a>
+          </li>
         </div>
       </ul>
     </div>
@@ -76,4 +85,5 @@ export class NavbarComponent {
   readonly routeService = inject(RouteService);
 
   $user = input.required<string>({ alias: 'user' });
+  $route = input.required<Route>({ alias: 'route' });
 }

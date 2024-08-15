@@ -8,6 +8,7 @@ import { BottomNavComponent } from './bottom-nav.component';
 import { NavbarComponent } from './navbar.component';
 import { SidenavComponent } from './sidenav.component';
 import { UiService } from './ui.service';
+import { Route } from './ui.model';
 
 @Component({
   template: `
@@ -16,11 +17,11 @@ import { UiService } from './ui.service';
       class="loading loading-bars loading-lg absolute left-1/2 bottom-1/2"
     ></span>
     } @switch ($userConfig()?.theme) { @case ('bottom'){
-    <app-bottom-nav [user]="$userInView()"></app-bottom-nav>
+    <app-bottomnav [user]="$userInView()" [route]="$route()"></app-bottomnav>
     } @case('top'){
-    <app-navbar [user]="$userInView()"></app-navbar>
+    <app-navbar [user]="$userInView()" [route]="$route()"></app-navbar>
     }@case('side'){
-    <app-sidenav [user]="$userInView()"></app-sidenav>
+    <app-sidenav [user]="$userInView()" [route]="$route()"></app-sidenav>
     } }
     <ng-content></ng-content>
   `,
@@ -34,16 +35,31 @@ export class LayoutComponent {
   readonly githubService = inject(GithubService);
 
   readonly $userConfig = signal<Config | undefined>(undefined);
+  readonly $route = signal<Route>('search');
 
   readonly $userInView = toSignal(
     this.route.params.pipe(
       map((p) => p['username']),
       filter((u) => !!u),
-      tap(async (user) =>
+      tap(async (user) => {
         this.$userConfig.set(
           (await this.githubService.getProfile(user))?.config
-        )
-      )
+        );
+
+        this.$route.set(this.getRoute(this.route.snapshot.routeConfig?.path));
+      })
     )
   );
+
+  private getRoute(routeConfigPath: string | undefined): Route {
+    if (routeConfigPath?.includes('posts') || routeConfigPath?.includes('post'))
+      return 'posts';
+
+    if (routeConfigPath?.includes('tags') || routeConfigPath?.includes('tag'))
+      return 'tags';
+
+    if (routeConfigPath?.includes('overview')) return 'overview';
+
+    return 'search';
+  }
 }

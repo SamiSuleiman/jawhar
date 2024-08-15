@@ -4,36 +4,50 @@ import {
   Component,
   inject,
   input,
-  signal,
 } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
-import { map } from 'rxjs';
-import { UiService } from './ui.service';
+import { RouteService } from '../core/services/route.service';
 import { PersonIconComponent } from './icons/person-icon.component';
 import { PostsIconComponent } from './icons/posts-icon.component';
-import { TagsIconComponent } from './icons/tags-icon.component';
 import { SearchIconComponent } from './icons/search-icon.component';
-import { RouteService } from '../core/services/route.service';
+import { TagsIconComponent } from './icons/tags-icon.component';
+import { Route } from './ui.model';
+import { UiService } from './ui.service';
 
 @Component({
   template: `
     <div class="btm-nav">
-      <button>
+      <button
+        (click)="routeService.goto('overview', $user())"
+        [ngClass]="[
+          routeService.isDisabled('overview', $user()) ? 'hidden' : ''
+        ]"
+        [ngClass]="[$route() === 'overview' ? 'active' : '']"
+      >
         <app-person-icon></app-person-icon>
       </button>
-      <button class="active">
+      <button
+        (click)="routeService.goto('posts', $user())"
+        [ngClass]="[routeService.isDisabled('posts', $user()) ? 'hidden' : '']"
+        [ngClass]="[$route() === 'posts' ? 'active' : '']"
+      >
         <app-posts-icon></app-posts-icon>
       </button>
-      <button>
+      <button
+        (click)="routeService.goto('tags', $user())"
+        [ngClass]="[routeService.isDisabled('tags', $user()) ? 'hidden' : '']"
+        [ngClass]="[$route() === 'tags' ? 'active' : '']"
+      >
         <app-tags-icon></app-tags-icon>
       </button>
-      <button>
+      <button
+        [ngClass]="[$route() === 'search' ? 'active' : '']"
+        (click)="routeService.goto('', $user())"
+      >
         <app-search-icon></app-search-icon>
       </button>
     </div>
   `,
-  selector: 'app-bottom-nav',
+  selector: 'app-bottomnav',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
@@ -49,4 +63,5 @@ export class BottomNavComponent {
   readonly routeService = inject(RouteService);
 
   $user = input.required<string>({ alias: 'user' });
+  $route = input.required<Route>({ alias: 'route' });
 }
