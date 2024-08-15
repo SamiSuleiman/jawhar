@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
+  input,
   signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -13,6 +14,7 @@ import { PersonIconComponent } from './icons/person-icon.component';
 import { PostsIconComponent } from './icons/posts-icon.component';
 import { TagsIconComponent } from './icons/tags-icon.component';
 import { SearchIconComponent } from './icons/search-icon.component';
+import { RouteService } from '../core/services/route.service';
 
 @Component({
   template: `
@@ -46,32 +48,8 @@ import { SearchIconComponent } from './icons/search-icon.component';
   ],
 })
 export class BottomNavComponent {
-  private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
   readonly uiService = inject(UiService);
+  readonly routeService = inject(RouteService);
 
-  private readonly $userInView = toSignal(
-    this.route.params.pipe(map((p) => p['username']))
-  );
-
-  readonly $route = signal('');
-
-  constructor() {
-    const _currRoute = window.location.pathname.split('/')[1];
-    this.$route.set(_currRoute);
-  }
-
-  goto(route: string): void {
-    if (route === '') {
-      this.router.navigate(['/']);
-    } else {
-      if (!this.$userInView()) return;
-      this.router.navigate([`/${route}/${this.$userInView()}`]);
-    }
-  }
-
-  isDisabled(route: string): boolean {
-    if (route === '') return false;
-    return !this.$userInView();
-  }
+  $user = input.required<string>({ alias: 'user' });
 }

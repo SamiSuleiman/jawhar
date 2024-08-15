@@ -1,15 +1,11 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { UiService } from '../../ui/ui.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RouteService {
   private readonly router = inject(Router);
-  private readonly uiService = inject(UiService);
-
-  readonly $isLoading = computed(() => this.uiService.$isLoading());
 
   goto(route: string, user?: string): void {
     if (route === '') this.router.navigate(['/']);

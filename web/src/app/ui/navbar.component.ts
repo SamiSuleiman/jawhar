@@ -6,6 +6,7 @@ import {
   input,
 } from '@angular/core';
 import { RouteService } from '../core/services/route.service';
+import { UiService } from './ui.service';
 
 @Component({
   template: `
@@ -66,7 +67,7 @@ import { RouteService } from '../core/services/route.service';
         </div>
       </ul>
     </div>
-    @if(routeService.$isLoading()){
+    @if(uiService.$isLoading()){
 
     <progress class="progress w-full"></progress>
     }
@@ -77,6 +78,7 @@ import { RouteService } from '../core/services/route.service';
   imports: [NgClass],
 })
 export class NavbarComponent {
+  readonly uiService = inject(UiService);
   readonly routeService = inject(RouteService);
 
   $user = input.required<string>({ alias: 'user' });
