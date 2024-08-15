@@ -32,9 +32,6 @@ import { RouteService } from '../core/services/route.service';
         <app-search-icon></app-search-icon>
       </button>
     </div>
-    @if(uiService.$isLoading()){
-    <progress class="progress w-full"></progress>
-    }
   `,
   selector: 'app-bottom-nav',
   standalone: true,

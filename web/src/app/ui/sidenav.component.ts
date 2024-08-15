@@ -1,6 +1,5 @@
 import { Component, inject, input } from '@angular/core';
 import { RouteService } from '../core/services/route.service';
-import { UiService } from './ui.service';
 
 @Component({
   template: `<div class="drawer lg:drawer-open">
@@ -28,7 +27,6 @@ import { UiService } from './ui.service';
   standalone: true,
 })
 export class SidenavComponent {
-  readonly uiService = inject(UiService);
   readonly routeService = inject(RouteService);
 
   $user = input.required<string>({ alias: 'user' });

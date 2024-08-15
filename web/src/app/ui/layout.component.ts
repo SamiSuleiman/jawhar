@@ -2,16 +2,20 @@ import { Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { filter, map, tap } from 'rxjs';
-import { NavbarComponent } from './navbar.component';
-import { GithubService } from '../github/github.service';
 import { Config } from '../config/config.model';
-import { JsonPipe } from '@angular/common';
+import { GithubService } from '../github/github.service';
 import { BottomNavComponent } from './bottom-nav.component';
+import { NavbarComponent } from './navbar.component';
 import { SidenavComponent } from './sidenav.component';
+import { UiService } from './ui.service';
 
 @Component({
   template: `
-    @switch ($userConfig()?.theme) { @case ('bottom'){
+    @if(uiService.$isLoading()){
+    <span
+      class="loading loading-bars loading-lg absolute left-1/2 bottom-1/2"
+    ></span>
+    } @switch ($userConfig()?.theme) { @case ('bottom'){
     <app-bottom-nav [user]="$userInView()"></app-bottom-nav>
     } @case('top'){
     <app-navbar [user]="$userInView()"></app-navbar>
@@ -26,6 +30,7 @@ import { SidenavComponent } from './sidenav.component';
 })
 export class LayoutComponent {
   private readonly route = inject(ActivatedRoute);
+  readonly uiService = inject(UiService);
   readonly githubService = inject(GithubService);
 
   readonly $userConfig = signal<Config | undefined>(undefined);
