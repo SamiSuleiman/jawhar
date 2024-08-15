@@ -15,7 +15,7 @@ import { UiService } from './ui.service';
 
 @Component({
   template: `
-    <div class="btm-nav">
+    <div class="btm-nav lg:max-w-2xl m-auto">
       <button
         (click)="routeService.goto('overview', $user())"
         [ngClass]="[

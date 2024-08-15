@@ -14,11 +14,17 @@ import { PostService } from './post.service';
 @Component({
   template: `
     <app-layout> </app-layout>
+    @if($post(); as post){
     <div class="p-2 overflow-x-scroll">
-      <h1 class="font-bold">{{ $post()?.title }}</h1>
-      <img [src]="$post()?.thumbnail" alt="Thumbnail" />
-      <div [innerHTML]="$post()?.content ?? ''"></div>
+      <h1 class="font-bold">{{ post.title }}</h1>
+      <img [src]="post.thumbnail" alt="Thumbnail" />
+      <div [innerHTML]="post.content"></div>
     </div>
+    }@else {
+    <span
+      class="loading loading-bars loading-lg absolute left-1/2 bottom-1/2"
+    ></span>
+    }
   `,
   selector: 'app-post',
   standalone: true,

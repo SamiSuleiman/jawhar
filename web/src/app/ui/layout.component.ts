@@ -6,9 +6,8 @@ import { Config } from '../config/config.model';
 import { GithubService } from '../github/github.service';
 import { BottomNavComponent } from './bottom-nav.component';
 import { NavbarComponent } from './navbar.component';
-import { SidenavComponent } from './sidenav.component';
-import { UiService } from './ui.service';
 import { Route } from './ui.model';
+import { UiService } from './ui.service';
 
 @Component({
   template: `
@@ -20,12 +19,12 @@ import { Route } from './ui.model';
     <app-bottomnav [user]="$userInView()" [route]="$route()"></app-bottomnav>
     } @case('top'){
     <app-navbar [user]="$userInView()" [route]="$route()"></app-navbar>
-    }@case('side'){
-    <app-sidenav [user]="$userInView()" [route]="$route()"></app-sidenav>
+    } @case(undefined) {
+    <div class="skeleton h-4 w-full"></div>
     } }
     <ng-content></ng-content>
   `,
-  imports: [NavbarComponent, BottomNavComponent, SidenavComponent],
+  imports: [NavbarComponent, BottomNavComponent],
   selector: 'app-layout',
   standalone: true,
 })

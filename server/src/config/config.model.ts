@@ -2,9 +2,7 @@ import { z } from 'zod';
 
 export const ConfigSchema = z
   .object({
-    theme: z
-      .union([z.literal('side'), z.literal('bottom'), z.literal('top')])
-      .default('top'),
+    theme: z.union([z.literal('bottom'), z.literal('top')]).default('top'),
     footerLinks: z
       .object({
         youtube: z.string().url(),

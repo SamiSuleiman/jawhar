@@ -1,5 +1,5 @@
 export interface Config {
-  theme?: 'side' | 'bottom' | 'top';
+  theme?: 'bottom' | 'top';
   footerLinks?: {
     youtube?: string;
     x?: string;
