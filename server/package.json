@@ -26,7 +26,7 @@
     "@nestjs/core": "^10.4.0",
     "@nestjs/platform-express": "^10.4.0",
     "axios": "^1.7.4",
-    "cheerio": "1.0.0-rc.12",
+    "cheerio": "1.0.0",
     "highlight.js": "^11.10.0",
     "marked": "^13.0.3",
     "marked-custom-heading-id": "^2.0.8",
