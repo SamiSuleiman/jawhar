@@ -1,4 +1,4 @@
-import { Component, inject, input } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { GithubService } from '../github/github.service';
 
 @Component({
@@ -17,8 +17,5 @@ export class FooterComponent {
   readonly githubService = inject(GithubService);
 
   $user = input.required<string>({ alias: 'user' });
-
-  constructor() {
-    this.githubService.getProfile(this.$user());
-  }
+  $profile = computed(() => this.githubService.getProfile(this.$user()));
 }

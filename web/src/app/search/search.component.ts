@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { GithubService } from '../github/github.service';
 import { LayoutComponent } from '../ui/layout.component';
 import { HistoryComponent } from './history.component';
+import { NgClass } from '@angular/common';
+import { UiService } from '../ui/ui.service';
 
 @Component({
   template: `
@@ -17,15 +19,15 @@ import { HistoryComponent } from './history.component';
             >
               <input [(ngModel)]="name" type="text" placeholder="search" />
             </label>
-            @if ($isLoading()) {
-            <button class="btn btn-square">
-              <span class="loading loading-spinner"></span>
-            </button>
-            } @else {
-            <button class="btn rounded-none" (click)="onSubmit()">
+            <button
+              class="btn rounded-none"
+              (click)="onSubmit()"
+              [ngClass]="[
+                uiService.$isLoading() ? 'disabled cursor-not-allowed' : '',
+              ]"
+            >
               submit
             </button>
-            }
           </div>
         </div>
       </div>
@@ -34,21 +36,20 @@ import { HistoryComponent } from './history.component';
   `,
   selector: 'app-search',
   standalone: true,
-  imports: [FormsModule, HistoryComponent, LayoutComponent],
+  imports: [FormsModule, HistoryComponent, LayoutComponent, NgClass],
 })
 export class SearchComponent {
   private readonly router = inject(Router);
+  readonly uiService = inject(UiService);
   readonly ghService = inject(GithubService);
-
-  readonly $isLoading = signal(false);
 
   name = '';
 
   @HostListener('window:keydown.enter', ['$event'])
   async onSubmit() {
-    this.$isLoading.set(true);
+    this.uiService.$isLoading.set(true);
     const _res = await this.ghService.getProfile(this.name);
-    this.$isLoading.set(false);
+    this.uiService.$isLoading.set(false);
 
     if (_res) this.router.navigate([`/overview/${_res.username}`]);
   }

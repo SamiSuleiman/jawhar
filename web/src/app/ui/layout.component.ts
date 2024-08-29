@@ -36,7 +36,9 @@ import { FooterComponent } from './footer.component';
       }
     }
     <ng-content></ng-content>
-    <app-footer></app-footer>
+    @if ($userConfig()?.footerLinks) {
+      <app-footer [user]="$userInView()"></app-footer>
+    }
   `,
   imports: [NavbarComponent, BottomNavComponent, FooterComponent],
   selector: 'app-layout',
