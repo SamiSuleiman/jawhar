@@ -19,6 +19,6 @@ export class FooterComponent {
   $user = input.required<string>({ alias: 'user' });
 
   constructor() {
-    this.githubService.getProfile();
+    this.githubService.getProfile(this.$user());
   }
 }
