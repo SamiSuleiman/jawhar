@@ -8,6 +8,7 @@ import { BottomNavComponent } from './bottom-nav.component';
 import { NavbarComponent } from './navbar.component';
 import { Route } from './ui.model';
 import { UiService } from './ui.service';
+import { FooterComponent } from './footer.component';
 
 @Component({
   template: `
@@ -35,15 +36,16 @@ import { UiService } from './ui.service';
       }
     }
     <ng-content></ng-content>
+    <app-footer></app-footer>
   `,
-  imports: [NavbarComponent, BottomNavComponent],
+  imports: [NavbarComponent, BottomNavComponent, FooterComponent],
   selector: 'app-layout',
   standalone: true,
 })
 export class LayoutComponent {
   private readonly route = inject(ActivatedRoute);
+  private readonly githubService = inject(GithubService);
   readonly uiService = inject(UiService);
-  readonly githubService = inject(GithubService);
 
   readonly $userConfig = signal<Config | undefined>(undefined);
   readonly $route = signal<Route>('search');
