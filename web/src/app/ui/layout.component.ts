@@ -11,17 +11,29 @@ import { UiService } from './ui.service';
 
 @Component({
   template: `
-    @if(uiService.$isLoading()){
-    <span
-      class="loading loading-bars loading-lg absolute left-1/2 bottom-1/2"
-    ></span>
-    } @switch ($userConfig()?.theme) { @case ('bottom'){
-    <app-bottomnav [user]="$userInView()" [route]="$route()"></app-bottomnav>
-    } @case('top'){
-    <app-navbar [user]="$userInView()" [route]="$route()"></app-navbar>
-    } @case(undefined) {
-    <div class="skeleton h-4 w-full"></div>
-    } }
+    @if (uiService.$isLoading()) {
+      <span
+        class="loading loading-bars loading-lg absolute left-1/2 bottom-1/2"
+      ></span>
+    }
+    @switch ($userConfig()?.theme) {
+      @case ('bottom') {
+        <app-bottomnav
+          [user]="$userInView()"
+          [route]="$route()"
+        ></app-bottomnav>
+      }
+      @case ('top') {
+        <app-navbar [user]="$userInView()" [route]="$route()"></app-navbar>
+      }
+      @case (undefined && uiService.$isLoading()) {
+        @if (uiService.$isLoading()) {
+          <div class="skeleton h-4 w-full"></div>
+        } @else {
+          <app-navbar [user]="$userInView()" [route]="$route()"></app-navbar>
+        }
+      }
+    }
     <ng-content></ng-content>
   `,
   imports: [NavbarComponent, BottomNavComponent],
@@ -42,12 +54,12 @@ export class LayoutComponent {
       filter((u) => !!u),
       tap(async (user) => {
         this.$userConfig.set(
-          (await this.githubService.getProfile(user))?.config
+          (await this.githubService.getProfile(user))?.config,
         );
 
         this.$route.set(this.getRoute(this.route.snapshot.routeConfig?.path));
-      })
-    )
+      }),
+    ),
   );
 
   private getRoute(routeConfigPath: string | undefined): Route {
