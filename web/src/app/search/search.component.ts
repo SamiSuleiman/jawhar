@@ -9,7 +9,6 @@ import { UiService } from '../ui/ui.service';
 
 @Component({
   template: `
-    <app-layout></app-layout>
     <div class="flex flex-col">
       <div class="p-1 mt-4 flex justify-start items-center">
         <div class="flex flex-col gap-2 w-full">

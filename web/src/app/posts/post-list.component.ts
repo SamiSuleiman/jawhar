@@ -19,7 +19,6 @@ import { PostService } from './post.service';
 
 @Component({
   template: `
-    <app-layout> </app-layout>
     <div class="flex gap-2">
       <label class="input input-bordered flex items-center gap-2 flex-grow">
         <input
@@ -37,13 +36,13 @@ import { PostService } from './post.service';
     >
       <ul class="flex flex-col gap-2">
         @for (post of $posts(); track post) {
-        <li class="hover:underline">
-          <a (click)="goto(post.title)">
-            - <span>{{ post.title }}</span>
-          </a>
-        </li>
+          <li class="hover:underline">
+            <a (click)="goto(post.title)">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
         } @empty {
-        <li>No posts found.</li>
+          <li>No posts found.</li>
         }
       </ul>
     </div>
@@ -83,12 +82,12 @@ export class PostListComponent implements OnInit {
           this.$posts.set(
             search
               ? _posts.filter((post) =>
-                  post.title.toLowerCase().includes(search.toLowerCase())
+                  post.title.toLowerCase().includes(search.toLowerCase()),
                 )
-              : _posts
+              : _posts,
           );
         }),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
@@ -96,7 +95,7 @@ export class PostListComponent implements OnInit {
   async getPosts(refresh: boolean): Promise<Post[]> {
     const _posts = await this.postService.getParsedPosts(
       this.$username(),
-      refresh
+      refresh,
     );
     this.$internalPosts.set(_posts);
     return _posts;

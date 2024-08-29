@@ -12,33 +12,39 @@ import { FooterComponent } from './footer.component';
 
 @Component({
   template: `
-    @if (uiService.$isLoading()) {
-      <span
-        class="loading loading-bars loading-lg absolute left-1/2 bottom-1/2"
-      ></span>
-    }
-    @switch ($userConfig()?.theme) {
-      @case ('bottom') {
-        <app-bottomnav
-          [user]="$userInView()"
-          [route]="$route()"
-        ></app-bottomnav>
+    <div>
+      @if (uiService.$isLoading()) {
+        <span
+          class="loading loading-bars loading-lg absolute left-1/2 bottom-1/2"
+        ></span>
       }
-      @case ('top') {
-        <app-navbar [user]="$userInView()" [route]="$route()"></app-navbar>
-      }
-      @case (undefined && uiService.$isLoading()) {
-        @if (uiService.$isLoading()) {
-          <div class="skeleton h-4 w-full"></div>
-        } @else {
+      @switch ($userConfig()?.theme) {
+        @case ('bottom') {
+          <app-bottomnav
+            [user]="$userInView()"
+            [route]="$route()"
+          ></app-bottomnav>
+        }
+        @case ('top') {
           <app-navbar [user]="$userInView()" [route]="$route()"></app-navbar>
         }
+        @case (undefined && uiService.$isLoading()) {
+          @if (uiService.$isLoading()) {
+            <div class="skeleton h-4 w-full"></div>
+          } @else {
+            <app-navbar [user]="$userInView()" [route]="$route()"></app-navbar>
+          }
+        }
       }
-    }
-    <ng-content></ng-content>
-    @if ($userConfig()?.footerLinks) {
-      <app-footer [user]="$userInView()"></app-footer>
-    }
+    </div>
+    <div>
+      <ng-content></ng-content>
+    </div>
+    <div>
+      @if ($userConfig()?.footerLinks) {
+        <app-footer [user]="$userInView()"></app-footer>
+      }
+    </div>
   `,
   imports: [NavbarComponent, BottomNavComponent, FooterComponent],
   selector: 'app-layout',

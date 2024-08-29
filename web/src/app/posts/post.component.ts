@@ -13,17 +13,16 @@ import { PostService } from './post.service';
 
 @Component({
   template: `
-    <app-layout> </app-layout>
-    @if($post(); as post){
-    <div class="p-2 overflow-x-scroll">
-      <h1 class="font-bold">{{ post.title }}</h1>
-      <img [src]="post.thumbnail" alt="Thumbnail" />
-      <div [innerHTML]="post.content"></div>
-    </div>
-    }@else {
-    <span
-      class="loading loading-bars loading-lg absolute left-1/2 bottom-1/2"
-    ></span>
+    @if ($post(); as post) {
+      <div class="p-2 overflow-x-scroll">
+        <h1 class="font-bold">{{ post.title }}</h1>
+        <img [src]="post.thumbnail" alt="Thumbnail" />
+        <div [innerHTML]="post.content"></div>
+      </div>
+    } @else {
+      <span
+        class="loading loading-bars loading-lg absolute left-1/2 bottom-1/2"
+      ></span>
     }
   `,
   selector: 'app-post',
@@ -42,7 +41,7 @@ export class PostComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     const _post = await this.postService.getPost(
       this.$username(),
-      this.$title()
+      this.$title(),
     );
     this.$post.set(_post);
   }

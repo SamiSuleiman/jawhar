@@ -18,7 +18,6 @@ import { TagService } from './tag.service';
 
 @Component({
   template: `
-    <app-layout> </app-layout>
     <label class="input input-bordered flex items-center gap-2 flex-grow">
       <input
         type="text"
@@ -33,13 +32,13 @@ import { TagService } from './tag.service';
     >
       <ul class="flex flex-col gap-2">
         @for (tag of $tags(); track tag) {
-        <li class="hover:underline">
-          <a (click)="goto(tag)">
-            - <span>{{ tag }}</span>
-          </a>
-        </li>
+          <li class="hover:underline">
+            <a (click)="goto(tag)">
+              - <span>{{ tag }}</span>
+            </a>
+          </li>
         } @empty {
-        <li>No tags found.</li>
+          <li>No tags found.</li>
         }
       </ul>
     </div>
@@ -80,12 +79,12 @@ export class TagListComponent implements OnInit {
           this.$tags.set(
             search
               ? _tags.filter((tag) =>
-                  tag.toLowerCase().includes(search.toLowerCase())
+                  tag.toLowerCase().includes(search.toLowerCase()),
                 )
-              : _tags
+              : _tags,
           );
         }),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }

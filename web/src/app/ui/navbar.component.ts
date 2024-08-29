@@ -40,7 +40,7 @@ import { Route } from './ui.model';
           <li
             (click)="routeService.goto('overview', $user())"
             [ngClass]="[
-              routeService.isDisabled('overview', $user()) ? 'hidden' : ''
+              routeService.isDisabled('overview', $user()) ? 'hidden' : '',
             ]"
             [ngClass]="$route() === 'overview' ? 'bg-gray-400 text-black' : ''"
           >
@@ -49,7 +49,7 @@ import { Route } from './ui.model';
           <li
             (click)="routeService.goto('posts', $user())"
             [ngClass]="[
-              routeService.isDisabled('posts', $user()) ? 'hidden' : ''
+              routeService.isDisabled('posts', $user()) ? 'hidden' : '',
             ]"
             [ngClass]="$route() === 'posts' ? 'bg-gray-400 text-black' : ''"
           >
@@ -58,7 +58,7 @@ import { Route } from './ui.model';
           <li
             (click)="routeService.goto('tags', $user())"
             [ngClass]="[
-              routeService.isDisabled('tags', $user()) ? 'hidden' : ''
+              routeService.isDisabled('tags', $user()) ? 'hidden' : '',
             ]"
             [ngClass]="$route() === 'tags' ? 'bg-gray-400 text-black' : ''"
           >

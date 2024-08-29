@@ -14,17 +14,16 @@ import { TagService } from './tag.service';
 
 @Component({
   template: `
-    <app-layout></app-layout>
     <div
       class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center"
     >
       <ul class="flex flex-col gap-2">
         @for (post of $posts(); track post) {
-        <li class="hover:underline">
-          <a (click)="goto(post.title)">
-            - <span>{{ post.title }}</span>
-          </a>
-        </li>
+          <li class="hover:underline">
+            <a (click)="goto(post.title)">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
         }
       </ul>
     </div>
@@ -49,7 +48,7 @@ export class TagComponent implements OnInit {
     const _posts = await this.postService.getParsedPosts(
       this.$username(),
       false,
-      [this.$tag()]
+      [this.$tag()],
     );
 
     this.$posts.set(_posts);
