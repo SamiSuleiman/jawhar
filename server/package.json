@@ -28,7 +28,7 @@
     "axios": "^1.7.5",
     "cheerio": "1.0.0",
     "highlight.js": "^11.10.0",
-    "marked": "^14.1.0",
+    "marked": "^14.1.2",
     "marked-custom-heading-id": "^2.0.10",
     "marked-highlight": "^2.1.3",
     "node-html-parser": "^6.1.13",
