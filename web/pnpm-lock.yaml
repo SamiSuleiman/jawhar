@@ -58,8 +58,8 @@ importers:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.39)
       daisyui:
-        specifier: ^4.12.7
-        version: 4.12.10(postcss@8.4.39)
+        specifier: ^4.12.12
+        version: 4.12.12(postcss@8.4.39)
       jasmine-core:
         specifier: ~5.1.0
         version: 5.1.2
@@ -2287,8 +2287,8 @@ packages:
   custom-event@1.0.1:
     resolution: {integrity: sha512-GAj5FOq0Hd+RsCGVJxZuKaIDXDf3h6GQoNEjFgbLLI/trgtavwUbSnZ5pVfg27DVCaWjIohryS0JFwIJyT2cMg==}
 
-  daisyui@4.12.10:
-    resolution: {integrity: sha512-jp1RAuzbHhGdXmn957Z2XsTZStXGHzFfF0FgIOZj3Wv9sH7OZgLfXTRZNfKVYxltGUOBsG1kbWAdF5SrqjebvA==}
+  daisyui@4.12.12:
+    resolution: {integrity: sha512-xmCZ4piuWOjhNyB0VDKczB5vKFCipTA7UxaZNOzCz6cT8kvWgv5BDtUo+Hk9gOFufByOlfuBdzLpfhY5GsebTQ==}
     engines: {node: '>=16.9.0'}
 
   date-format@4.0.14:
@@ -7020,11 +7020,11 @@ snapshots:
 
   custom-event@1.0.1: {}
 
-  daisyui@4.12.10(postcss@8.4.39):
+  daisyui@4.12.12(postcss@8.4.39):
     dependencies:
       css-selector-tokenizer: 0.8.0
       culori: 3.3.0
-      picocolors: 1.0.1
+      picocolors: 1.1.0
       postcss-js: 4.0.1(postcss@8.4.39)
     transitivePeerDependencies:
       - postcss
