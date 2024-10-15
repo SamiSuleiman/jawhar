@@ -29,12 +29,12 @@ import { TranslocoDirective } from '@jsverse/transloco';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PostComponent implements OnInit {
-  readonly $username = input.required<string>({ alias: 'username' });
-  readonly $title = input.required<string>({ alias: 'title' });
+  protected readonly $username = input.required<string>({ alias: 'username' });
+  protected readonly $title = input.required<string>({ alias: 'title' });
 
   private readonly postService = inject(PostService);
 
-  readonly $post = signal<Post | undefined>(undefined);
+  protected readonly $post = signal<Post | undefined>(undefined);
 
   async ngOnInit(): Promise<void> {
     const _post = await this.postService.getPost(

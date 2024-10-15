@@ -13,8 +13,8 @@ export const appConfig: ApplicationConfig = {
     provideTransloco({
       config: {
         availableLangs: [
-          { id: 'en', label: 'English' },
           { id: 'ar', label: 'العربية' },
+          { id: 'en', label: 'English' },
         ],
         defaultLang: 'en',
         reRenderOnLangChange: true,

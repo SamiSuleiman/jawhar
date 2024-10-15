@@ -37,12 +37,12 @@ import { TranslocoDirective } from '@jsverse/transloco';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserComponent implements OnInit {
-  readonly $username = input.required<string>({ alias: 'username' });
+  protected readonly $username = input.required<string>({ alias: 'username' });
 
   private readonly router = inject(Router);
   private readonly ghService = inject(GithubService);
 
-  readonly $profile = signal<Profile | undefined>(undefined);
+  protected readonly $profile = signal<Profile | undefined>(undefined);
 
   async ngOnInit(): Promise<void> {
     const _profile = await this.ghService.getProfile(this.$username());

@@ -62,3 +62,11 @@ a {
   @apply cursor-pointer;
   @apply underline;
 }
+
+.rtl {
+  direction: rtl;
+}
+
+.ltr {
+  direction: ltr;
+}

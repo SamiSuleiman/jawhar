@@ -65,7 +65,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PostListComponent implements OnInit {
-  readonly $username = input.required<string>({ alias: 'username' });
+  protected readonly $username = input.required<string>({ alias: 'username' });
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly postService = inject(PostService);
@@ -73,8 +73,8 @@ export class PostListComponent implements OnInit {
 
   private readonly $internalPosts = signal<Post[]>([]);
 
-  readonly searchCtrl = new FormControl('');
-  readonly $posts = signal<Post[]>([]);
+  protected readonly searchCtrl = new FormControl('');
+  protected readonly $posts = signal<Post[]>([]);
 
   async ngOnInit(): Promise<void> {
     const _posts = await this.getPosts(false);
@@ -98,7 +98,7 @@ export class PostListComponent implements OnInit {
       .subscribe();
   }
 
-  async getPosts(refresh: boolean): Promise<Post[]> {
+  protected async getPosts(refresh: boolean): Promise<Post[]> {
     const _posts = await this.postService.getParsedPosts(
       this.$username(),
       refresh,
@@ -107,7 +107,7 @@ export class PostListComponent implements OnInit {
     return _posts;
   }
 
-  goto(title: string) {
+  protected goto(title: string) {
     this.router.navigate([`/posts/${this.$username()}/${title}`]);
   }
 }

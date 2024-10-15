@@ -37,14 +37,14 @@ import { TagService } from './tag.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagComponent implements OnInit {
-  readonly $username = input.required<string>({ alias: 'username' });
-  readonly $tag = input.required<string>({ alias: 'tag' });
+  protected readonly $username = input.required<string>({ alias: 'username' });
+  protected readonly $tag = input.required<string>({ alias: 'tag' });
 
   private readonly router = inject(Router);
-  readonly tagService = inject(TagService);
-  readonly postService = inject(PostService);
+  protected readonly tagService = inject(TagService);
+  protected readonly postService = inject(PostService);
 
-  readonly $posts = signal<Post[]>([]);
+  protected readonly $posts = signal<Post[]>([]);
 
   async ngOnInit(): Promise<void> {
     const _posts = await this.postService.getParsedPosts(
@@ -56,7 +56,7 @@ export class TagComponent implements OnInit {
     this.$posts.set(_posts);
   }
 
-  goto(title: string) {
+  protected goto(title: string) {
     this.router.navigate([`/posts/${this.$username()}/${title}`]);
   }
 }

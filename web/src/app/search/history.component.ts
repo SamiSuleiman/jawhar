@@ -47,18 +47,18 @@ import { TranslocoDirective } from '@jsverse/transloco';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HistoryComponent implements OnInit {
-  readonly $chosen = output<string>({ alias: 'chosen' });
+  protected readonly $chosen = output<string>({ alias: 'chosen' });
 
-  readonly $history = signal<ProfileHistoryEntry[]>([]);
+  protected readonly $history = signal<ProfileHistoryEntry[]>([]);
 
-  readonly clickable = clickable;
+  protected readonly clickable = clickable;
 
   ngOnInit(): void {
     const _history = this.getHistory();
     this.$history.set(_history);
   }
 
-  onEntryRemove(username: string): void {
+  protected onEntryRemove(username: string): void {
     const _history = this.getHistory().filter(
       (entry) => entry.username !== username,
     );

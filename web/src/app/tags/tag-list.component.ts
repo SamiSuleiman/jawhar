@@ -61,7 +61,7 @@ import { TranslocoDirective } from '@jsverse/transloco';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagListComponent implements OnInit {
-  readonly $username = input.required<string>({ alias: 'username' });
+  protected readonly $username = input.required<string>({ alias: 'username' });
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly tagService = inject(TagService);
@@ -69,8 +69,8 @@ export class TagListComponent implements OnInit {
 
   private readonly $internalTags = signal<string[]>([]);
 
-  readonly searchCtrl = new FormControl('');
-  readonly $tags = signal<string[]>([]);
+  protected readonly searchCtrl = new FormControl('');
+  protected readonly $tags = signal<string[]>([]);
 
   async ngOnInit(): Promise<void> {
     const _tags = await this.getTags(false);
@@ -94,13 +94,13 @@ export class TagListComponent implements OnInit {
       .subscribe();
   }
 
-  async getTags(refresh: boolean): Promise<string[]> {
+  protected async getTags(refresh: boolean): Promise<string[]> {
     const _tags = await this.tagService.getUserTags(this.$username(), refresh);
     this.$internalTags.set(_tags);
     return _tags;
   }
 
-  goto(tag: string) {
+  protected goto(tag: string) {
     this.router.navigate([`/tags/${this.$username()}/${tag}`]);
   }
 }

@@ -46,14 +46,14 @@ import { TranslocoDirective } from '@jsverse/transloco';
 })
 export class SearchComponent {
   private readonly router = inject(Router);
-  readonly ghService = inject(GithubService);
+  protected readonly ghService = inject(GithubService);
 
-  readonly $isLoading = signal(false);
+  protected readonly $isLoading = signal(false);
 
-  name = '';
+  protected name = '';
 
   @HostListener('window:keydown.enter', ['$event'])
-  async onSubmit() {
+  protected async onSubmit() {
     this.$isLoading.set(true);
     const _res = await this.ghService.getProfile(this.name);
     this.$isLoading.set(false);
@@ -61,7 +61,7 @@ export class SearchComponent {
     if (_res) this.router.navigate([`/overview/${_res.username}`]);
   }
 
-  onHistoryNameChosen(username: string) {
+  protected onHistoryNameChosen(username: string) {
     this.name = username;
     this.onSubmit();
   }
