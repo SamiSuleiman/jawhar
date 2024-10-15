@@ -15,40 +15,43 @@ import { debounceTime, tap } from 'rxjs';
 import { SearchIconComponent } from '../ui/icons/search-icon.component';
 import { NavbarComponent } from '../ui/navbar.component';
 import { TagService } from './tag.service';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   template: `
     <app-navbar> </app-navbar>
-
-    <label class="input input-bordered flex items-center gap-2 flex-grow">
-      <input
-        type="text"
-        class="grow"
-        placeholder="Search"
-        [formControl]="searchCtrl"
-      />
-      <app-search-icon></app-search-icon>
-    </label>
-    <div
-      class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center m-2"
-    >
-      <ul class="flex flex-col gap-2">
-        @for (tag of $tags(); track tag) {
-        <li class="hover:underline">
-          <a (click)="goto(tag)">
-            - <span>{{ tag }}</span>
-          </a>
-        </li>
-        } @empty {
-        <li>No tags found.</li>
-        }
-      </ul>
-    </div>
+    <ng-container *transloco="let t">
+      <label class="input input-bordered flex items-center gap-2 flex-grow">
+        <input
+          type="text"
+          class="grow"
+          [placeholder]="t('inputs.placeholders.search')"
+          [formControl]="searchCtrl"
+        />
+        <app-search-icon></app-search-icon>
+      </label>
+      <div
+        class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center m-2"
+      >
+        <ul class="flex flex-col gap-2">
+          @for (tag of $tags(); track tag) {
+            <li class="hover:underline">
+              <a (click)="goto(tag)">
+                - <span>{{ tag }}</span>
+              </a>
+            </li>
+          } @empty {
+            <li>{{ t('lists.empty.tags') }}</li>
+          }
+        </ul>
+      </div>
+    </ng-container>
   `,
   styles: ``,
   selector: 'app-tag-list',
   standalone: true,
   imports: [
+    TranslocoDirective,
     NavbarComponent,
     RouterLink,
     ReactiveFormsModule,
@@ -81,12 +84,12 @@ export class TagListComponent implements OnInit {
           this.$tags.set(
             search
               ? _tags.filter((tag) =>
-                  tag.toLowerCase().includes(search.toLowerCase())
+                  tag.toLowerCase().includes(search.toLowerCase()),
                 )
-              : _tags
+              : _tags,
           );
         }),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }

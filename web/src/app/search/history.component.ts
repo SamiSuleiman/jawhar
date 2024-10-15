@@ -10,35 +10,38 @@ import { GITHUB_HISTORY_KEY } from '../github/github.consts';
 import { clickable } from '../ui/classes';
 import { NgClass } from '@angular/common';
 import { CloseIconComponent } from '../ui/icons/close-icon.component';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   template: `
-    <div class="max-h-[75vh] overflow-y-scroll">
-      @for (entry of $history(); track $index) {
-        <div class="card card-side bg-base-100">
-          <figure
-            class="max-w-14"
-            [ngClass]="clickable"
-            (click)="$chosen.emit(entry.username)"
-          >
-            <img [src]="entry.avatarUrl" alt="avatar" />
-          </figure>
-          <div class="card-body">
-            <h2 class="card-title flex justify-between">
-              <span>
-                {{ entry.username }}
-              </span>
-              <app-close-icon
-                (click)="onEntryRemove(entry.username)"
-                [ngClass]="clickable"
-              ></app-close-icon>
-            </h2>
+    <ng-container *transloco="let t">
+      <div class="max-h-[75vh] overflow-y-scroll">
+        @for (entry of $history(); track $index) {
+          <div class="card card-side bg-base-100">
+            <figure
+              class="max-w-14"
+              [ngClass]="clickable"
+              (click)="$chosen.emit(entry.username)"
+            >
+              <img [src]="entry.avatarUrl" [alt]="t('images.alts.avatar')" />
+            </figure>
+            <div class="card-body">
+              <h2 class="card-title flex justify-between">
+                <span>
+                  {{ entry.username }}
+                </span>
+                <app-close-icon
+                  (click)="onEntryRemove(entry.username)"
+                  [ngClass]="clickable"
+                ></app-close-icon>
+              </h2>
+            </div>
           </div>
-        </div>
-      }
-    </div>
+        }
+      </div>
+    </ng-container>
   `,
-  imports: [NgClass, CloseIconComponent],
+  imports: [NgClass, CloseIconComponent, TranslocoDirective],
   selector: 'app-history',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,

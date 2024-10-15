@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AlertComponent } from './ui/alert.component';
+import { TranslocoService } from '@jsverse/transloco';
 
 @Component({
   template: `
@@ -13,4 +14,10 @@ import { AlertComponent } from './ui/alert.component';
   standalone: true,
   imports: [RouterOutlet, AlertComponent],
 })
-export class AppComponent {}
+export class AppComponent {
+  private readonly translocoService = inject(TranslocoService);
+
+  constructor() {
+    this.translocoService.setDefaultLang('en');
+  }
+}

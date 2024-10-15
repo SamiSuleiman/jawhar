@@ -9,75 +9,89 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map } from 'rxjs';
 import { UiService } from './ui.service';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   template: `
-    <div class="navbar bg-base-100">
-      <ul class="menu menu-horizontal px-1 flex w-full justify-between">
-        <li class="hidden sm:block">
-          <details>
-            <summary class="font-extrabold text-2xl">ج</summary>
-            <ul class="bg-base-100 rounded-t-none p-2">
-              <li class="w-60">
-                <a
-                  class="no-underline"
-                  target="_blank"
-                  href="https://github.com/samisul/jawhar"
-                  >GitHub</a
-                >
-              </li>
-              <li>
-                <a
-                  class="no-underline"
-                  target="_blank"
-                  href="https://github.com/samisul/jawhar/blob/0c98757994e3a2cf4bf523d9fb2ed72ec0649549/readme.md#usage"
-                  >Get started with your own blog!</a
-                >
-              </li>
-            </ul>
-          </details>
-        </li>
+    <ng-container *transloco="let t">
+      <div class="navbar bg-base-100">
+        <ul class="menu menu-horizontal px-1 flex w-full justify-between">
+          <li class="hidden sm:block">
+            <details>
+              <summary class="font-extrabold text-2xl">ج</summary>
+              <ul class="bg-base-100 rounded-t-none p-2">
+                <li class="w-60">
+                  <a
+                    class="no-underline"
+                    target="_blank"
+                    href="https://github.com/samisul/jawhar"
+                    >{{ t('nav.links.github.active') }}</a
+                  >
+                </li>
+                <li>
+                  <a
+                    class="no-underline"
+                    target="_blank"
+                    href="https://github.com/samisul/jawhar/blob/0c98757994e3a2cf4bf523d9fb2ed72ec0649549/readme.md#usage"
+                    >{{ t('nav.links.followUs.active') }}</a
+                  >
+                </li>
+              </ul>
+            </details>
+          </li>
 
-        <div class="flex">
-          <li
-            (click)="goto('overview')"
-            [ngClass]="[isDisabled('overview') ? 'hidden' : '']"
-          >
-            <a class="no-underline">{{
-              $route() === 'overview' ? 'Overview/' : '/Overview'
-            }}</a>
-          </li>
-          <li
-            (click)="goto('posts')"
-            [ngClass]="[isDisabled('posts') ? 'hidden' : '']"
-          >
-            <a class="no-underline">
-              {{ $route() === 'posts' ? 'Posts/' : '/Posts' }}
-            </a>
-          </li>
-          <li
-            (click)="goto('tags')"
-            [ngClass]="[isDisabled('tags') ? 'hidden' : '']"
-          >
-            <a class="no-underline">
-              {{ $route() === 'tags' ? 'Tags/' : '/Tags' }}
-            </a>
-          </li>
-        </div>
-        <div class="flex">
-          <li (click)="goto('')"><a>/Search</a></li>
-        </div>
-      </ul>
-    </div>
-    @if(uiService.$isLoading()){
-
-    <progress class="progress w-full"></progress>
+          <div class="flex">
+            <li
+              (click)="goto('overview')"
+              [ngClass]="[isDisabled('overview') ? 'hidden' : '']"
+            >
+              <a class="no-underline">{{
+                $route() === 'overview'
+                  ? t('nav.links.overview.active')
+                  : t('nav.links.overview.inactive')
+              }}</a>
+            </li>
+            <li
+              (click)="goto('posts')"
+              [ngClass]="[isDisabled('posts') ? 'hidden' : '']"
+            >
+              <a class="no-underline">
+                {{
+                  $route() === 'posts'
+                    ? t('nav.links.posts.active')
+                    : t('nav.links.posts.inactive')
+                }}
+              </a>
+            </li>
+            <li
+              (click)="goto('tags')"
+              [ngClass]="[isDisabled('tags') ? 'hidden' : '']"
+            >
+              <a class="no-underline">
+                {{
+                  $route() === 'tags'
+                    ? t('nav.links.tags.active')
+                    : t('nav.links.tags.inactive')
+                }}
+              </a>
+            </li>
+          </div>
+          <div class="flex">
+            <li (click)="goto('')">
+              <a>{{ t('nav.links.search.active') }}</a>
+            </li>
+          </div>
+        </ul>
+      </div>
+    </ng-container>
+    @if (uiService.$isLoading()) {
+      <progress class="progress w-full"></progress>
     }
   `,
   selector: 'app-navbar',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgClass],
+  imports: [NgClass, TranslocoDirective],
 })
 export class NavbarComponent {
   private readonly router = inject(Router);
@@ -85,7 +99,7 @@ export class NavbarComponent {
   readonly uiService = inject(UiService);
 
   private readonly $userInView = toSignal(
-    this.route.params.pipe(map((p) => p['username']))
+    this.route.params.pipe(map((p) => p['username'])),
   );
 
   readonly $route = signal('');
