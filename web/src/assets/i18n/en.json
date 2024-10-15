@@ -1,0 +1,55 @@
+{
+  "buttons": {
+    "search": "Search",
+    "submit": "Submit"
+  },
+  "inputs": {
+    "placeholders": {
+      "search": "Search"
+    }
+  },
+  "lists": {
+    "pre": {
+      "posts": "Post: ",
+      "tags": "Tag: "
+    },
+    "empty": {
+      "posts": "No posts found.",
+      "tags": "No tags found."
+    }
+  },
+  "images": {
+    "alts": {
+      "thumbnail": "Thumbnail",
+      "avatar": "Avatar"
+    }
+  },
+  "nav": {
+    "links": {
+      "overview": {
+        "active": "Overview/",
+        "inactive": "/Overview"
+      },
+      "posts": {
+        "active": "Posts/",
+        "inactive": "/Posts"
+      },
+      "tags": {
+        "active": "Tags/",
+        "inactive": "/Tags"
+      },
+      "search": {
+        "active": "/Search",
+        "inactive": "/Search"
+      },
+      "github": {
+        "active": "GitHub",
+        "inactive": "GitHub"
+      },
+      "followUs": {
+        "active": "Get started with your own blog!",
+        "inactive": "Get started with your own blog!"
+      }
+    }
+  }
+}

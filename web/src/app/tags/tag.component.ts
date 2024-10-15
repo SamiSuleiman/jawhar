@@ -2,16 +2,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   OnInit,
-  computed,
   inject,
   input,
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { NavbarComponent } from '../ui/navbar.component';
-import { TagService } from './tag.service';
 import { Post } from '../posts/post.model';
 import { PostService } from '../posts/post.service';
+import { NavbarComponent } from '../ui/navbar.component';
+import { TagService } from './tag.service';
 
 @Component({
   template: `
@@ -22,11 +21,11 @@ import { PostService } from '../posts/post.service';
     >
       <ul class="flex flex-col gap-2">
         @for (post of $posts(); track post) {
-        <li class="hover:underline">
-          <a (click)="goto(post.title)">
-            - <span>{{ post.title }}</span>
-          </a>
-        </li>
+          <li class="hover:underline">
+            <a (click)="goto(post.title)">
+              - <span>{{ post.title }}</span>
+            </a>
+          </li>
         }
       </ul>
     </div>
@@ -38,26 +37,26 @@ import { PostService } from '../posts/post.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagComponent implements OnInit {
-  readonly $username = input.required<string>({ alias: 'username' });
-  readonly $tag = input.required<string>({ alias: 'tag' });
+  protected readonly $username = input.required<string>({ alias: 'username' });
+  protected readonly $tag = input.required<string>({ alias: 'tag' });
 
   private readonly router = inject(Router);
-  readonly tagService = inject(TagService);
-  readonly postService = inject(PostService);
+  protected readonly tagService = inject(TagService);
+  protected readonly postService = inject(PostService);
 
-  readonly $posts = signal<Post[]>([]);
+  protected readonly $posts = signal<Post[]>([]);
 
   async ngOnInit(): Promise<void> {
     const _posts = await this.postService.getParsedPosts(
       this.$username(),
       false,
-      [this.$tag()]
+      [this.$tag()],
     );
 
     this.$posts.set(_posts);
   }
 
-  goto(title: string) {
+  protected goto(title: string) {
     this.router.navigate([`/posts/${this.$username()}/${title}`]);
   }
 }

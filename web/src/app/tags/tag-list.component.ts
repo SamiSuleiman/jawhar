@@ -15,40 +15,43 @@ import { debounceTime, tap } from 'rxjs';
 import { SearchIconComponent } from '../ui/icons/search-icon.component';
 import { NavbarComponent } from '../ui/navbar.component';
 import { TagService } from './tag.service';
+import { TranslocoDirective } from '@jsverse/transloco';
 
 @Component({
   template: `
     <app-navbar> </app-navbar>
-
-    <label class="input input-bordered flex items-center gap-2 flex-grow">
-      <input
-        type="text"
-        class="grow"
-        placeholder="Search"
-        [formControl]="searchCtrl"
-      />
-      <app-search-icon></app-search-icon>
-    </label>
-    <div
-      class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center m-2"
-    >
-      <ul class="flex flex-col gap-2">
-        @for (tag of $tags(); track tag) {
-        <li class="hover:underline">
-          <a (click)="goto(tag)">
-            - <span>{{ tag }}</span>
-          </a>
-        </li>
-        } @empty {
-        <li>No tags found.</li>
-        }
-      </ul>
-    </div>
+    <ng-container *transloco="let t">
+      <label class="input input-bordered flex items-center gap-2 flex-grow">
+        <input
+          type="text"
+          class="grow"
+          [placeholder]="t('inputs.placeholders.search')"
+          [formControl]="searchCtrl"
+        />
+        <app-search-icon></app-search-icon>
+      </label>
+      <div
+        class="max-h-[60vh] overflow-y-scroll p-1 flex justify-start items-center m-2"
+      >
+        <ul class="flex flex-col gap-2">
+          @for (tag of $tags(); track tag) {
+            <li class="hover:underline">
+              <a (click)="goto(tag)">
+                - <span>{{ tag }}</span>
+              </a>
+            </li>
+          } @empty {
+            <li>{{ t('lists.empty.tags') }}</li>
+          }
+        </ul>
+      </div>
+    </ng-container>
   `,
   styles: ``,
   selector: 'app-tag-list',
   standalone: true,
   imports: [
+    TranslocoDirective,
     NavbarComponent,
     RouterLink,
     ReactiveFormsModule,
@@ -58,7 +61,7 @@ import { TagService } from './tag.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TagListComponent implements OnInit {
-  readonly $username = input.required<string>({ alias: 'username' });
+  protected readonly $username = input.required<string>({ alias: 'username' });
 
   private readonly destroyRef = inject(DestroyRef);
   private readonly tagService = inject(TagService);
@@ -66,8 +69,8 @@ export class TagListComponent implements OnInit {
 
   private readonly $internalTags = signal<string[]>([]);
 
-  readonly searchCtrl = new FormControl('');
-  readonly $tags = signal<string[]>([]);
+  protected readonly searchCtrl = new FormControl('');
+  protected readonly $tags = signal<string[]>([]);
 
   async ngOnInit(): Promise<void> {
     const _tags = await this.getTags(false);
@@ -81,23 +84,23 @@ export class TagListComponent implements OnInit {
           this.$tags.set(
             search
               ? _tags.filter((tag) =>
-                  tag.toLowerCase().includes(search.toLowerCase())
+                  tag.toLowerCase().includes(search.toLowerCase()),
                 )
-              : _tags
+              : _tags,
           );
         }),
-        takeUntilDestroyed(this.destroyRef)
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
   }
 
-  async getTags(refresh: boolean): Promise<string[]> {
+  protected async getTags(refresh: boolean): Promise<string[]> {
     const _tags = await this.tagService.getUserTags(this.$username(), refresh);
     this.$internalTags.set(_tags);
     return _tags;
   }
 
-  goto(tag: string) {
+  protected goto(tag: string) {
     this.router.navigate([`/tags/${this.$username()}/${tag}`]);
   }
 }
